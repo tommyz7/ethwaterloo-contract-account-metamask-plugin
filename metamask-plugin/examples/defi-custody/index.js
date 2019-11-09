@@ -1,5 +1,6 @@
 const { errors: rpcErrors } = require('eth-json-rpc-errors')
 
+const DCWalletBuild = require('../../../truffle/build/contracts/Word.json');
 const accounts = [];
 
 // ethers.js object
@@ -45,8 +46,7 @@ wallet.registerAccountMessageHandler(async (origin, req) => {
       console.log('rawTxData.data', rawTxData.data, rawTxData.data == "0x")
       if (rawTxData.data == "0x") { // ETH transfer
         console.log('contract', contract)
-        let build = require('./Word.json');
-        let iface = new ethers.utils.Interface(build.abi)
+        let iface = new ethers.utils.Interface(DCWalletBuild.abi)
         let calldata = iface.functions.sendEth.encode([rawTxData.to, rawTxData.value]);
         console.log('calldata', calldata);
 
@@ -122,11 +122,10 @@ async function prompt (message) {
 
 // Deployment is asynchronous, so we use an async IIFE
 async function deployContract(walletObj) {
-    let build = require('../../../truffle/build/contracts/Word.json');
-    console.log('build', build)
+    console.log('DCWalletBuild', DCWalletBuild)
 
     // Create an instance of a Contract Factory
-    let factory = new ethers.ContractFactory(build.abi, build.bytecode, walletObj);
+    let factory = new ethers.ContractFactory(DCWalletBuild.abi, DCWalletBuild.bytecode, walletObj);
 
     // Notice we pass in "Hello World" as the parameter to the constructor
     contract = await factory.deploy("Hello World");
