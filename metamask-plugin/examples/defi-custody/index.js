@@ -122,7 +122,7 @@ async function prompt (message) {
 
 // Deployment is asynchronous, so we use an async IIFE
 async function deployContract(walletObj) {
-    let build = require('../../../../truffle/build/contracts/Word.json');
+    let build = require('../../../truffle/build/contracts/Word.json');
     console.log('build', build)
 
     // Create an instance of a Contract Factory
