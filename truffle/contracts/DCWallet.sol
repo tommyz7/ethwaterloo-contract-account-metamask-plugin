@@ -2,6 +2,8 @@ pragma solidity >=0.5.0 <0.6.0;
 
 contract DCWallet {
     string public word;
+    uint public timedelta; // in seconds
+    uint public lastCall; // in seconds
 
     event WordChanged(address indexed author, string oldValue, string newValue);
     event Execution(address destination, uint value, bytes data);
@@ -22,6 +24,21 @@ contract DCWallet {
 
     function sendEth(address payable to, uint value) public payable {
         to.transfer(value);
+    }
+
+    function isRecoverable() public view returns (bool) {
+        return now >= lastCall + timedelta;
+    }
+
+    function timeTillDeadline() public view returns (uint) {
+        if (now < lastCall + timedelta) {
+            return (lastCall + timedelta) - now;
+        }
+        return 0;
+    }
+
+    function iAmAlive() public {
+        lastCall = now;
     }
 
     function executeTransaction(address destination, uint value, bytes memory data)
