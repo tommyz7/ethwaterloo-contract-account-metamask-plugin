@@ -19,7 +19,7 @@ export default function useLoadInjectedWeb3State() {
         });
 
         let w3: Web3 = new Web3(state.injectedProvider);
-        let ethersProvider = new ethers.providers.Web3Provider(state.injectedProvider);
+        //let ethersProvider = new ethers.providers.Web3Provider(state.injectedProvider);
         
 
         dispatch({
