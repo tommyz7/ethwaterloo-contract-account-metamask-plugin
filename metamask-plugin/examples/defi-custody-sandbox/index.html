@@ -3,44 +3,60 @@
 
   </head>
     <title>defi-custody</title>
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
   </head>
 
 <body>
-
-  <div class="mainContainer">
-    <div class="topTitle">Recoverable Countdown Account - SANDBOX</div>
-    <div class="secondaryInstructions">Make sure the plugin bundle is currently hosted on localhost:8089 for this to work.</div>
-  
-    <div class="displayBox">
-      <button class="connectAndInstall btn-secondary">Connect and Install</button>
-      <button class="connect btn-secondary">Connect Only</button>
-    </div>
-
-    <div class="displayBox">
-      <div className="row seeMe"> 
-        <div className="col-md-8">
-            New MetaMask Contract Account
+  <div class="container mainContainer">
+      <div class="topTitle">Recoverable Countdown Account - SANDBOX</div>
+        <div class="secondaryInstructions">Make sure the plugin bundle is currently hosted on localhost:8089 for this to work.</div>
+      
+        <div class="row rowItem"> 
+          <div class="col-md-5">
+            <button class="connectAndInstall btn-secondary">Connect and Install</button>
+          </div>
+          <div class="col-md-3">
+            <button class="connect btn-secondary">Connect Only</button>
+          </div>
         </div>
-        <div className="col-md-4">
-          <button class="connect btn-primary">Create</button>
+
+      
+        <div class="row rowItem"> 
+          <div class="col-md-5">
+            MetaMask Contract Account
+          </div>
+          <div class="col-md-3">
+            <button class="connect btn-primary">Create</button>
+          </div>
+        </div>
+
+          <div class="row rowItem"> 
+            <div class="col-md-5">
+                <input class="recoveryAddrInput" placeholder="Enter Recover 0x or ENS address" size="40" />
+            </div>
+            <div class="col-md-3">
+                <button class="recoveryAddr btn-primary">Set Recovery Address</button>
+            </div>
+          </div>
+       
+
+
+        <div class="row rowItem"> 
+            <div class="col-md-5">
+                Recoverable Countdown timer: 4 Days, 3 Hours
+            </div>
+            <div class="col-md-4">
+                <button class="resetCountdown btn-primary">Sign Tx to Reset Countdown</button>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
-  </div>
-
-
   
-  <br>
-  <button class="createAccount">Create New MetaMask Contract Account</button>
-  <br>
-  <br>
-  <input class="recoveryAddrInput" placeholder="Enter Recover 0x or ENS address" size="40" />
-  <button class="recoveryAddr">Set Recovery Address</button>
-
-  <p>Recoverable Countdown timer: 4 Days, 3 Hours</p>
-  <button class="resetCountdown">Sign Tx to Reset Countdown</button>
+  
+  
 
   <br/>
   <hr />
