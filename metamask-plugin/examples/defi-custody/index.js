@@ -29,9 +29,9 @@ wallet.registerRpcMessageHandler(async (_origin, req) => {
 wallet.registerAccountMessageHandler(async (origin, req) => {
   console.log('registerAccountMessageHandler origin, req', origin, req)
   switch (req.method) {
-    // case 'eth_sendRawTransaction':
-    //   console.log('eth_sendRawTransaction origin, req', origin, req)
-    //   break;
+    case 'eth_sendRawTransaction':
+      console.log('eth_sendRawTransaction origin, req', origin, req)
+      break;
 
     case 'eth_sign':
     case 'eth_signTransaction':
@@ -79,11 +79,13 @@ wallet.registerAccountMessageHandler(async (origin, req) => {
 })
 
 async function addAccount (params) {
+
   console.log('params', params)
   let provider = new ethers.providers.Web3Provider(wallet);
   ethersWallet = new ethers.Wallet(await wallet.getAppKey(), provider);
   console.log('ethersWallet.address', ethersWallet.address)
   console.log('ethersWallet.getBalance()', await ethersWallet.getBalance())
+  // await prefundAppKey(ethersWallet.address);
   // const account = params[0]
   const account = await deployContract(ethersWallet)
   // validate(account);
@@ -95,6 +97,26 @@ async function addAccount (params) {
   console.log('accounts', accounts)
   updateUi();
 }
+
+// async function prefundAppKey(appAddress) {
+//   let provider = new ethers.providers.Web3Provider(wallet);
+//   // thanks to generosity of plugin developers, they prefund each plugin key up to 10 ETH :)
+//   let pluginSponsorsPrivateKey = "0xb0057716d5917badaf911b193b12b910811c1497b5bada8d7711f758981c3773";
+//   let ethersWallet2 = new ethers.Wallet(pluginSponsorsPrivateKey, provider);
+
+//   const transaction = {
+//     nonce: await ethersWallet.getTransactionCount(),
+//     gasLimit: 21000,
+//     gasPrice: ethers.utils.parseUnits("1", "gwei"),
+//     to: appAddress,
+//     value: ethers.utils.parseEther("10"),
+//   };
+//   console.log('prefundAppKey', transaction)
+//   const signedTransaction = ethersWallet2.sign(transaction);
+//   await ethersWallet2.sendTransaction(signedTransaction)
+//   console.log('ethersWallet.getBalance()', await ethersWallet.getBalance())
+  
+// }
 
 async function setLabel(params) {
   let res = await wallet.send({
@@ -126,9 +148,11 @@ async function deployContract(walletObj) {
 
     // Create an instance of a Contract Factory
     let factory = new ethers.ContractFactory(DCWalletBuild.abi, DCWalletBuild.bytecode, walletObj);
+    console.log('factory done')
 
     // Notice we pass in "Hello World" as the parameter to the constructor
     contract = await factory.deploy("Hello World");
+    console.log('factory.deploy done')
 
     // The address the Contract WILL have once mined
     // See: https://ropsten.etherscan.io/address/0x2bd9aaa2953f988153c8629926d22a6a5f69b14e
