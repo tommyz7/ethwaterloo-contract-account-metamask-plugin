@@ -10,7 +10,8 @@ export enum ActionType {
   SET_ETH_WEB3 = "SET_ETH_WEB3",
   SET_ETH_BALANCE = "SET_ETH_BALANCE",
   SET_INJECTED_PROVIDER = "SET_INJECTED_PROVIDER",
-  SET_RECOVERY_COUNTDOWN = "SET_RECOVERY_COUNTDOWN"
+  SET_RECOVERY_COUNTDOWN = "SET_RECOVERY_COUNTDOWN",
+  SET_ETHERS_PROVIDER = "SET_ETHERS_PROVIDER"
 }
 
 
@@ -19,7 +20,8 @@ const initialState: IAppState = {
   ethWeb3: null,
   ethBalance: '--',
   injectedProvider: null,
-  recoveryCountdown: -1
+  recoveryCountdown: -1,
+  ethersProvider: null
 };
 
 
@@ -46,6 +48,10 @@ function reducer(state: IAppState, action: IAction | any): IAppState {
     case ActionType.SET_RECOVERY_COUNTDOWN:
         return {
           ...state, recoveryCountdown: action.payload
+      }
+    case ActionType.SET_ETHERS_PROVIDER:
+      return {
+        ...state, ethersProvider: action.payload
       }
     default:
       return state;

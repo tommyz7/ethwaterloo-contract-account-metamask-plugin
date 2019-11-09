@@ -1,7 +1,7 @@
 import React from 'react';
 import { Store, ActionType } from '../../common/Store';
 import Web3 from 'web3';
-
+import ethers from 'ethers';
 
 
 export default function useLoadInjectedWeb3State() {
@@ -19,6 +19,8 @@ export default function useLoadInjectedWeb3State() {
         });
 
         let w3: Web3 = new Web3(state.injectedProvider);
+        let ethersProvider = new ethers.providers.Web3Provider(state.injectedProvider);
+        
 
         dispatch({
           type: ActionType.SET_ETH_WEB3,

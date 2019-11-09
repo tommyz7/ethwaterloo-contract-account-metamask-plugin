@@ -15,6 +15,7 @@ export interface IAppState {
   ethBalance: string;
   injectedProvider: any;
   recoveryCountdown: number;
+  ethersProvider: any| null;
 }
 
 export interface IAction {
