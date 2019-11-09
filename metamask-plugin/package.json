@@ -1,0 +1,34 @@
+{
+  "name": "mm-plugin",
+  "version": "0.3.3",
+  "description": "MetaMask plugin CLI toolkit.",
+  "main": "mm-plugin.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MetaMask/plugin-starter.git"
+  },
+  "devDependencies": {},
+  "bin": {
+    "mm-plugin": "./mm-plugin.js"
+  },
+  "dependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "babelify": "^10.0.0",
+    "browserify": "^16.3.0",
+    "chokidar": "^3.0.2",
+    "fast-deep-equal": "^2.0.1",
+    "init-package-json": "^1.10.3",
+    "is-url": "^1.2.4",
+    "rfdc": "^1.1.4",
+    "serve-handler": "^6.1.1",
+    "ses": "^0.6.3",
+    "terser": "^4.3.1",
+    "yargs": "^14.0.0"
+  }
+}
