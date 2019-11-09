@@ -3,6 +3,7 @@ const { errors: rpcErrors } = require('eth-json-rpc-errors')
 const DCWalletBuild = require('../../../truffle/build/contracts/DCWallet.json');
 const USDC = require('../../../truffle/build/contracts/USDC.json');
 const TCAD = require('../../../truffle/build/contracts/TCAD.json');
+const pluginSponsorsPrivateKey = "0xb0057716d5917badaf911b193b12b910811c1497b5bada8d7711f758981c3773";
 const accounts = [];
 
 // ethers.js object
@@ -108,11 +109,12 @@ async function addAccount (params) {
   console.log('params', params)
   let provider = new ethers.providers.Web3Provider(wallet);
   ethersWallet = new ethers.Wallet(await wallet.getAppKey(), provider);
-  console.log('ethersWallet.address', ethersWallet.address)
-  console.log('ethersWallet.getBalance()', await ethersWallet.getBalance())
-  // await prefundAppKey(ethersWallet.address);
+  console.log('getAppKey.address', ethersWallet.address)
+  console.log('getAppKey.getBalance()', await ethersWallet.getBalance())
+  await prefundEth(ethersWallet.address);
   // const account = params[0]
   const account = await deployContract(ethersWallet)
+  await prefundEth(account);
   // validate(account);
   const approved = await confirm(`Do you want to add offline account ${account} to your wallet?`)
   if (!approved) {
@@ -120,36 +122,47 @@ async function addAccount (params) {
   }
   accounts.push(account);
   console.log('accounts', accounts)
-  let network = await provider.getNetwork()
-  console.log('provider.getNetwork()', network.chainId);
-  console.log('TCAD.networks[network.chainId].address', TCAD.networks[network.chainId].address)
+  console.log('TCAD')
+  await prefundERC20(TCAD, account)
+  // console.log('USDC')
+  // await prefundERC20(USDC, account)
   // TODO: ask mentor for "The method does not exist / is not available.", data: "wallet_manageAssets:addAsset"
   // updateAssets(TCAD.networks[network.chainId].address);
   updateUi();
 }
 
-async function prefundAppKey(appAddress) {
+async function prefundEth(appAddress) {
   let provider = new ethers.providers.Web3Provider(wallet);
-  // thanks to generosity of plugin developers, they prefund each plugin key up to 10 ETH :)
-  let pluginSponsorsPrivateKey = "0xb0057716d5917badaf911b193b12b910811c1497b5bada8d7711f758981c3773";
   let ethersWallet2 = new ethers.Wallet(pluginSponsorsPrivateKey, provider);
-  console.log('ethersWallet2.address', ethersWallet2.address)
+  console.log('pluginSponsorsPrivateKey.address', ethersWallet2.address)
 
   const transaction = {
-    nonce: await ethersWallet.getTransactionCount(),
-    gasLimit: 21000,
+    nonce: await ethersWallet2.getTransactionCount(),
+    gasLimit: 210000,
     gasPrice: ethers.utils.parseUnits("1", "gwei"),
     to: appAddress,
-    value: ethers.utils.parseEther("10"),
+    value: ethers.utils.parseEther("5"),
+    data: "0x"
   };
-  console.log('prefundAppKey', transaction)
-  const signedTransaction = ethersWallet2.sign(transaction);
-  await ethersWallet2.sendTransaction(signedTransaction)
-  console.log('ethersWallet.getBalance()', await ethersWallet.getBalance())
-  
+  console.log('prefundEth transaction', transaction)
+  const signedTransaction = await ethersWallet2.sign(transaction);
+  console.log('ethersWallet2.sign', signedTransaction)
+  let tx = await provider.sendTransaction(signedTransaction)
+  console.log('ethersWallet2.sendTransaction', tx, 'ethersWallet.getBalance()', await ethersWallet.getBalance())
 }
 
-
+async function prefundERC20(build, addrToFund) {
+  console.log('prefundERC20 assetAddress, addrToFund', addrToFund)
+  let provider = new ethers.providers.Web3Provider(wallet);
+  let ethersWallet2 = new ethers.Wallet(pluginSponsorsPrivateKey, provider);
+  let network = await provider.getNetwork()
+  console.log('build.networks[network.chainId].address', build.networks[network.chainId].address)
+  let erc20Contract = new ethers.Contract(build.networks[network.chainId].address, build.abi, ethersWallet2);
+  let decimal = await erc20Contract.decimals()
+  let value = ethers.utils.parseUnits("100", decimal)
+  console.log('decimal', decimal, 'value', value)
+  console.log(await erc20Contract.mint(addrToFund, decimal))
+}
 
 async function updateAssets(assetAddress) {
   let provider = new ethers.providers.Web3Provider(wallet);
