@@ -713,7 +713,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1037,
+                          "referencedDeclaration": 1041,
                           "src": "473:3:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -1225,7 +1225,7 @@
                       "name": "now",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1039,
+                      "referencedDeclaration": 1043,
                       "src": "855:3:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -1368,7 +1368,7 @@
                       "name": "now",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1039,
+                      "referencedDeclaration": 1043,
                       "src": "964:3:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -1519,7 +1519,7 @@
                             "name": "now",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 1039,
+                            "referencedDeclaration": 1043,
                             "src": "1038:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_uint256",
@@ -1653,7 +1653,7 @@
                       "name": "now",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1039,
+                      "referencedDeclaration": 1043,
                       "src": "1130:3:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -2721,7 +2721,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1037,
+                          "referencedDeclaration": 1041,
                           "src": "473:3:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -3233,7 +3233,7 @@
                       "name": "now",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1039,
+                      "referencedDeclaration": 1043,
                       "src": "855:3:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -3376,7 +3376,7 @@
                       "name": "now",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1039,
+                      "referencedDeclaration": 1043,
                       "src": "964:3:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -3527,7 +3527,7 @@
                             "name": "now",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 1039,
+                            "referencedDeclaration": 1043,
                             "src": "1038:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_uint256",
@@ -3661,7 +3661,7 @@
                       "name": "now",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1039,
+                      "referencedDeclaration": 1043,
                       "src": "1130:3:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -4265,7 +4265,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-11-09T17:41:53.769Z",
+  "updatedAt": "2019-11-09T20:10:28.766Z",
   "devdoc": {
     "methods": {}
   },
