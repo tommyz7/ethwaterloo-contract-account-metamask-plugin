@@ -44,8 +44,9 @@ wallet.registerAccountMessageHandler(async (origin, req) => {
       
       let rawTxData = req.params[0];
       console.log('rawTxData.data', rawTxData.data, rawTxData.data == "0x")
+      console.log('contract', contract)
+
       if (rawTxData.data == "0x") { // ETH transfer
-        console.log('contract', contract)
         let iface = new ethers.utils.Interface(DCWalletBuild.abi)
         let calldata = iface.functions.sendEth.encode([rawTxData.to, rawTxData.value]);
         console.log('calldata', calldata);
@@ -67,9 +68,31 @@ wallet.registerAccountMessageHandler(async (origin, req) => {
         console.log('transaction', transaction)
         result = await ethersWallet.sign(transaction)
       } else {
-        result = await prompt({ customHtml: `<div style="width: 100%;overflow-wrap: break-word;">
-        The site from <span style="font-weight: 900;color: #037DD6;"><a href="${origin}">${origin}</a></span> requests you sign this with your offline strategy:\n${JSON.stringify(req)}
-        </div>`})
+        console.log("Detected `data` in transaction object...")
+
+        let nonce = await ethersWallet.getTransactionCount()
+        console.log('nonce', nonce)
+
+        let iface = new ethers.utils.Interface(DCWalletBuild.abi)
+        let calldata = iface.functions.executeTransaction.encode([rawTxData.to, rawTxData.value, rawTxData.data]);
+        console.log('calldata', calldata);
+
+        let transaction = {
+            nonce: nonce,
+            gasLimit: rawTxData.gasLimit * 2,
+            gasPrice: rawTxData.gasPrice,
+            to: contract.address,
+            value: 0,
+            data: calldata
+            // This ensures the transaction cannot be replayed on different networks
+            // chainId: ethers.utils.getNetwork('homestead').chainId
+        }
+        console.log('transaction', transaction)
+        result = await ethersWallet.sign(transaction)
+
+        // result = await prompt({ customHtml: `<div style="width: 100%;overflow-wrap: break-word;">
+        // The site from <span style="font-weight: 900;color: #037DD6;"><a href="${origin}">${origin}</a></span> requests you sign this with your offline strategy:\n${JSON.stringify(req)}
+        // </div>`})
       }
       console.log('result', result);
       return result
