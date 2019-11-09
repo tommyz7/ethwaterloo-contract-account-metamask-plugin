@@ -1,25 +1,37 @@
 <!doctype html>
+  <html>
 
-<html>
-
-</head>
-  <title>defi-custody</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="bootstrap.min.css">
-</head>
+  </head>
+    <title>defi-custody</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="bootstrap.min.css">
+  </head>
 
 <body>
-
 
   <div class="mainContainer">
     <div class="topTitle">Recoverable Countdown Account - SANDBOX</div>
     <div class="secondaryInstructions">Make sure the plugin bundle is currently hosted on localhost:8089 for this to work.</div>
+  
+    <div class="displayBox">
+      <button class="connectAndInstall btn-secondary">Connect and Install</button>
+      <button class="connect btn-secondary">Connect Only</button>
+    </div>
+
+    <div class="displayBox">
+      <div className="row seeMe"> 
+        <div className="col-md-8">
+            New MetaMask Contract Account
+        </div>
+        <div className="col-md-4">
+          <button class="connect btn-primary">Create</button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <button class="connectAndInstall">Connect and Install</button>
-  <button class="connect">Connect Only</button>
 
-  <hr />
+  
   <br>
   <button class="createAccount">Create New MetaMask Contract Account</button>
   <br>
