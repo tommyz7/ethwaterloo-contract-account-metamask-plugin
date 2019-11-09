@@ -16,14 +16,14 @@
 
   <hr />
   <br>
-  <button class="connect">Create New MetaMask Contract Account</button>
+  <button class="createAccount">Create New MetaMask Contract Account</button>
   <br>
   <br>
-  <input placeholder="Enter Recover 0x or ENS address" size="40" />
-  <button class="connect">Set Recovery Address</button>
+  <input class="recoveryAddrInput" placeholder="Enter Recover 0x or ENS address" size="40" />
+  <button class="recoveryAddr">Set Recovery Address</button>
 
   <p>Recoverable Countdown timer: 4 Days, 3 Hours</p>
-  <button class="connect">Sign Tx to Reset Countdown</button>
+  <button class="resetCountdown">Sign Tx to Reset Countdown</button>
 
   <br/>
   <hr />
@@ -52,11 +52,21 @@ const addButton = document.querySelector('button.add')
 const tipButton = document.querySelector('button.tip')
 const depositButton = document.querySelector('button.deposit')
 
+//defi-custody poc
+const createAccountButton = document.querySelector('button.createAccount')
+createAccountButton.addEventListener('click', createAccount)
+
+
 connectAndInstallButton.addEventListener('click', connectAndInstall)
 connectButton.addEventListener('click', connect)
 addButton.addEventListener('click', add)
 tipButton.addEventListener('click', tip)
 // depositButton.addEventListener('click', deposit)
+
+
+async function createAccount () {
+  console.log('createAccount()');
+}
 
 async function connectAndInstall () {
   await ethereum.send({
