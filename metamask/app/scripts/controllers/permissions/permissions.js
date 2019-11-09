@@ -2,7 +2,7 @@ const JsonRpcEngine = require('json-rpc-engine')
 const asMiddleware = require('json-rpc-engine/src/asMiddleware')
 const createAsyncMiddleware = require('json-rpc-engine/src/createAsyncMiddleware')
 const ObservableStore = require('obs-store')
-const RpcCap = require('rpc-cap').CapabilitiesController
+const RpcCap = require('json-rpc-capabilities-middleware').CapabilitiesController
 const { errors: rpcErrors } = require('eth-json-rpc-errors')
 
 const {
@@ -19,6 +19,7 @@ const METADATA_STORE_KEY = 'siteMetadata'
 const LOG_STORE_KEY = 'permissionsLog'
 const HISTORY_STORE_KEY = 'permissionsHistory'
 const WALLET_METHOD_PREFIX = 'wallet_'
+const INTERNAL_METHOD_PREFIX = 'metamask_'
 
 function prefix (method) {
   return WALLET_METHOD_PREFIX + method
@@ -28,8 +29,10 @@ function prefix (method) {
 class PermissionsController {
 
   constructor ({
-    openPopup, closePopup, keyringController, pluginsController, assetsController,
+    openPopup, closePopup, pluginAccountsController,
+    pluginsController, assetsController, accountsController,
     setupProvider, pluginRestrictedMethods, getApi, metamaskEventMethods,
+    addPrompt,
   } = {},
   restoredPermissions = {}, restoredState = {}
   ) {
@@ -40,11 +43,12 @@ class PermissionsController {
     })
     this._openPopup = openPopup
     this._closePopup = closePopup
-    this.keyringController = keyringController
+    this.pluginAccountsController = pluginAccountsController
     this.pluginsController = pluginsController
     this.assetsController = assetsController
+    this.accountsController = accountsController
     this.setupProvider = setupProvider
-    this.externalRestrictedMethods = getExternalRestrictedMethods(this)
+    this.externalRestrictedMethods = getExternalRestrictedMethods(this, addPrompt)
     this.pluginRestrictedMethods = pluginRestrictedMethods
     this.getApi = getApi
     this.metamaskEventMethods = metamaskEventMethods
@@ -56,6 +60,7 @@ class PermissionsController {
     const engine = new JsonRpcEngine()
     engine.push(this.createPluginMethodRestrictionMiddleware(isPlugin))
     engine.push(createRequestMiddleware({
+      internalPrefix: INTERNAL_METHOD_PREFIX,
       store: this.store,
       storeKey: METADATA_STORE_KEY,
     }))
@@ -186,10 +191,10 @@ class PermissionsController {
         const ethereumProvider = this.pluginsController.setupProvider(pluginName, async () => { return {name: pluginName } }, true)
         await this.pluginsController.run(pluginName, approvedPermissions, sourceCode, ethereumProvider)
       }))
-        .catch((err) => {
+        .catch((reason) => {
           // We swallow this error, we don't want the plugin permissions prompt to block the resolution
           // Of the main dapp's permissions prompt.
-          console.error(`Error when adding plugin:`, err)
+          console.error(`Plugin had its permissions rejected: ${reason.message}`)
         })
 
     } catch (reason) {

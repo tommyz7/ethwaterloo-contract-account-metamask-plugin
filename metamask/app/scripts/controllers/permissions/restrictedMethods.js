@@ -6,6 +6,7 @@ const pluginRestrictedMethodDescriptions = {
   fetch: 'Retrieve data from external sites',
   updatePluginState: 'Store data locally',
   getPluginState: 'Get data stored locally',
+  onUnlock: 'Take action when you unlock your account',
   Box: 'Backup your data to 3Box',
   subscribeToPreferencesControllerChanges: 'Access your preferences and take action when they change',
   updatePreferencesControllerState: 'Update/modify your preferences',
@@ -65,14 +66,14 @@ const pluginRestrictedMethodDescriptions = {
   newUnapprovedTx: 'Be notified with details of your new transactions',
 }
 
-function getExternalRestrictedMethods (permissionsController) {
-  const { assetsController } = permissionsController
+function getExternalRestrictedMethods (permissionsController, addPrompt) {
+  const { assetsController, pluginAccountsController } = permissionsController
 
   return {
     'eth_accounts': {
       description: 'View Ethereum accounts',
       method: (_, res, __, end) => {
-        permissionsController.keyringController.getAccounts()
+        permissionsController.accountsController.getAccounts()
           .then((accounts) => {
             res.result = accounts
             end()
@@ -105,27 +106,14 @@ function getExternalRestrictedMethods (permissionsController) {
     'wallet_manageAssets': {
       description: 'Display custom assets in your wallet.',
       method: (req, res, _next, end, engine) => {
-        const [method, opts] = req.params
-        const requestor = engine.domain
-        try {
-          switch (method) {
-            case 'addAsset':
-              res.result = assetsController.addAsset(requestor, opts)
-              return end()
-            case 'updateAsset':
-              res.result = assetsController.updateAsset(requestor, opts)
-              return end()
-            case 'removeAsset':
-              res.result = assetsController.removeAsset(requestor, opts)
-              return end()
-            default:
-              res.error = rpcErrors.methodNotFound(null, `${req.method}:${method}`)
-              end(res.error)
-          }
-        } catch (err) {
-          res.error = err
-          end(err)
-        }
+        assetsController.handleRpcRequest(req, res, _next, end, engine)
+      },
+    },
+
+    'wallet_manageIdentities': {
+      description: 'Provide accounts to your wallet and be responsible for their security.',
+      method: (req, res, _next, end, engine) => {
+        pluginAccountsController.handleRpcRequest(req, res, _next, end, engine)
       },
     },
 
@@ -148,6 +136,16 @@ function getExternalRestrictedMethods (permissionsController) {
       },
     },
 
+    'prompt': {
+      description: 'Prompt you for input via popup.',
+      method: async (req, res, _next, end, engine) => {
+        const requestor = engine.domain
+        const result = await addPrompt(`MetaMask Notice: ${requestor}`, req.params[0])
+        res.result = result || true // JsonRpcEngine throws if no result or error
+        return end()
+      },
+    },
+
     'wallet_plugin_*': {
       description: 'Connect to plugin $1, and install it if not available yet.',
       method: async (req, res, _next, end, engine) => {
@@ -162,7 +160,7 @@ function getExternalRestrictedMethods (permissionsController) {
           // Here is where we would invoke the message on that plugin iff possible.
           const handler = permissionsController.pluginsController.rpcMessageHandlers.get(origin)
           if (!handler) {
-            res.error = rpcErrors.methodNotFound(`Plugin RPC message handler not found.`, req.method)
+            res.error = rpcErrors.methodNotFound(null, req.method)
             return end(res.error)
           }
 
