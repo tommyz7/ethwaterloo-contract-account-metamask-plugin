@@ -6,9 +6,10 @@ const accounts = [];
 updateUi();
 
 wallet.registerRpcMessageHandler(async (_origin, req) => {
-  console.log('addAccount')
+
   switch (req.method) {
     case 'addAccount':
+      console.log('addAccount')
       addAccount(req.params);
       break;
 

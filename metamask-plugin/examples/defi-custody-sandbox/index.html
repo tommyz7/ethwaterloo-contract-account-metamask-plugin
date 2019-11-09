@@ -4,12 +4,17 @@
 
 </head>
   <title>defi-custody</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="bootstrap.min.css">
 </head>
 
 <body>
 
-  <h1>Recoverable Countdown Account - SANDBOX</h1>
-  <p>Make sure the plugin bundle is currently hosted on localhost:8089 for this to work.</p>
+
+  <div class="mainContainer">
+    <div class="topTitle">Recoverable Countdown Account - SANDBOX</div>
+    <div class="secondaryInstructions">Make sure the plugin bundle is currently hosted on localhost:8089 for this to work.</div>
+  </div>
 
   <button class="connectAndInstall">Connect and Install</button>
   <button class="connect">Connect Only</button>
@@ -66,6 +71,15 @@ tipButton.addEventListener('click', tip)
 
 async function createAccount () {
   console.log('createAccount()');
+
+  await ethereum.send({
+    method: 'wallet_requestPermissions',
+    params: [{
+      'eth_accounts': {},
+    }]
+  })
+
+  
 }
 
 async function connectAndInstall () {
@@ -141,7 +155,6 @@ async function tip () {
     alert(`Problem tipping: ${JSON.stringify(err)}`)
   }
 }
-
 
 </script>
 

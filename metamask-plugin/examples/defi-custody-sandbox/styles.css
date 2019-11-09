@@ -1,0 +1,15 @@
+.mainContainer {
+  margin: 1em;
+  font-size: 110%;
+}
+
+.topTitle {
+
+  font-size: 120%;
+}
+
+.secondaryInstructions {
+  color: grey;
+  font-size: 90%;
+
+}
