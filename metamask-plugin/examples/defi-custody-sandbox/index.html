@@ -1,0 +1,148 @@
+<!doctype html>
+
+<html>
+
+</head>
+  <title>defi-custody</title>
+</head>
+
+<body>
+
+  <h1>Recoverable Countdown Account - SANDBOX</h1>
+  <p>Make sure the plugin bundle is currently hosted on localhost:8089 for this to work.</p>
+
+  <button class="connectAndInstall">Connect and Install</button>
+  <button class="connect">Connect Only</button>
+
+  <hr />
+  <br>
+  <button class="createAccount">Create New MetaMask Contract Account</button>
+  <br>
+  <br>
+  <input class="recoveryAddrInput" placeholder="Enter Recover 0x or ENS address" size="40" />
+  <button class="recoveryAddr">Set Recovery Address</button>
+
+  <p>Recoverable Countdown timer: 4 Days, 3 Hours</p>
+  <button class="resetCountdown">Sign Tx to Reset Countdown</button>
+
+  <br/>
+  <hr />
+
+  <br>
+  <input class="address" value="0x1df62f291b2e969fb0849d99d9ce41e2f137006e" placeholder="Ethereum Address"></input>
+  <button class="add">Add Offline Account to Wallet</button>
+
+  <br>
+  <button class="tip">Tip</button>
+
+  <!-- <input class="addressTo" placeholder="Ethereum Address For Deposit"></input>
+  <input class="value" placeholder="Value"></input>
+  <button class="deposit">Deposit</button> -->
+
+</body>
+
+<script>
+
+const origin = 'http://localhost:8089/package.json'
+const pluginOrigin = `wallet_plugin_${origin}`
+
+const connectAndInstallButton = document.querySelector('button.connectAndInstall')
+const connectButton = document.querySelector('button.connect')
+const addButton = document.querySelector('button.add')
+const tipButton = document.querySelector('button.tip')
+const depositButton = document.querySelector('button.deposit')
+
+//defi-custody poc
+const createAccountButton = document.querySelector('button.createAccount')
+createAccountButton.addEventListener('click', createAccount)
+
+
+connectAndInstallButton.addEventListener('click', connectAndInstall)
+connectButton.addEventListener('click', connect)
+addButton.addEventListener('click', add)
+tipButton.addEventListener('click', tip)
+// depositButton.addEventListener('click', deposit)
+
+
+async function createAccount () {
+  console.log('createAccount()');
+}
+
+async function connectAndInstall () {
+  await ethereum.send({
+    method: 'wallet_requestPermissions',
+    params: [{
+      'eth_accounts': {},
+      [pluginOrigin]: {},
+    }]
+  })
+}
+
+async function connect () {
+  await ethereum.send({
+    method: 'wallet_requestPermissions',
+    params: [{
+      'eth_accounts': {},
+    }]
+  })
+}
+
+async function add () {
+  const input = document.querySelector('input.address').value
+
+  const result = await ethereum.send({
+    method: pluginOrigin,
+    params: [{
+      method: 'addAccount',
+      params: [ input ],
+    }]
+  })
+
+  if (result) {
+    alert(`Apparent success: ${JSON.stringify(result)}!`)
+  }
+}
+
+async function deposit() {
+  const to = document.querySelector('input.addressTo').value
+  const value = document.querySelector('input.value').value
+
+  const result = await ethereum.send({
+    method: pluginOrigin,
+    params: [{
+      method: 'deposit',
+      params: [ input ],
+    }]
+  }) 
+}
+
+async function tip () {
+  const response = await ethereum.send({
+    method: 'eth_accounts',
+  })
+  const account = response.result[0]
+  console.log(`Account ${account} chosen from ${JSON.stringify(response)}`)
+  const to = document.querySelector('input.address').value
+
+  try {
+    const response2 = await ethereum.send({
+      method: 'eth_sendTransaction',
+      params: [{
+        from: account,
+        value: '0x10000000000000',
+        to: to,
+      }]
+    })
+    console.log('response2 DAPP', response2);
+    if (response2) {
+      alert(`Site received tip result: ${response2.result}!`)
+    }
+  } catch (err) {
+    alert(`Problem tipping: ${JSON.stringify(err)}`)
+  }
+}
+
+
+</script>
+
+</html>
