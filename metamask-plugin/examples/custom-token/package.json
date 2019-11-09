@@ -4,7 +4,7 @@
   "description": "A locally defined token",
   "main": "index.js",
   "dependencies": {
-    "eth-json-rpc-errors": "^1.1.0"
+    "eth-json-rpc-errors": "^1.1.1"
   },
   "devDependencies": {},
   "scripts": {
@@ -18,8 +18,8 @@
   },
   "web3Wallet": {
     "bundle": {
-      "local": "dist/bundle.js",
-      "url": "http://localhost:8085/dist/bundle.js"
+      "local": "dist\\bundle.js",
+      "url": "http://localhost:8085/dist\\bundle.js"
     },
     "initialPermissions": {
       "wallet_manageAssets": {}

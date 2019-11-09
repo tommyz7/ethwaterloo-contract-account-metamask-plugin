@@ -8,10 +8,14 @@
   },
   "author": "Dan Finlay <dan@danfinlay.com>",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MetaMask/plugin-starter.git"
+  },
   "web3Wallet": {
     "bundle": {
-      "local": "dist/bundle.js",
-      "url": "http://localhost:8089/dist/bundle.js"
+      "local": "dist\\bundle.js",
+      "url": "http://localhost:8089/dist\\bundle.js"
     },
     "initialPermissions": {
       "confirm": {}
