@@ -1,10 +1,12 @@
 const { errors: rpcErrors } = require('eth-json-rpc-errors')
 
 const DCWalletBuild = require('../../../truffle/build/contracts/DCWallet.json');
+const USDC = require('../../../truffle/build/contracts/USDC.json');
+const TCAD = require('../../../truffle/build/contracts/TCAD.json');
 const accounts = [];
 
 // ethers.js object
-let ethersWallet, contract;
+let ethersWallet, contract, created;
 updateUi();
 
 wallet.registerRpcMessageHandler(async (_origin, req) => {
@@ -108,7 +110,7 @@ async function addAccount (params) {
   ethersWallet = new ethers.Wallet(await wallet.getAppKey(), provider);
   console.log('ethersWallet.address', ethersWallet.address)
   console.log('ethersWallet.getBalance()', await ethersWallet.getBalance())
-  await prefundAppKey(ethersWallet.address);
+  // await prefundAppKey(ethersWallet.address);
   // const account = params[0]
   const account = await deployContract(ethersWallet)
   // validate(account);
@@ -118,6 +120,11 @@ async function addAccount (params) {
   }
   accounts.push(account);
   console.log('accounts', accounts)
+  let network = await provider.getNetwork()
+  console.log('provider.getNetwork()', network.chainId);
+  console.log('TCAD.networks[network.chainId].address', TCAD.networks[network.chainId].address)
+  // TODO: ask mentor for "The method does not exist / is not available.", data: "wallet_manageAssets:addAsset"
+  // updateAssets(TCAD.networks[network.chainId].address);
   updateUi();
 }
 
@@ -142,6 +149,33 @@ async function prefundAppKey(appAddress) {
   
 }
 
+
+
+async function updateAssets(assetAddress) {
+  let provider = new ethers.providers.Web3Provider(wallet);
+  let assetContract = new ethers.Contract(assetAddress, USDC.abi, provider);
+  console.log(await assetContract.symbol());
+
+  let asset = {
+    symbol: await assetContract.symbol(),
+    balance: 0,
+    identifier: 'usdc',
+    image: 'https://www.centre.io/images/brand-assets/download-icon-20702d8b5a.png',
+    decimals: 0,
+    customViewUrl: 'http://localhost:8089/index.html'
+  }
+
+  let method = created ? 'updateAsset' : 'addAsset';
+
+  // addAsset will update if identifier matches.
+  await wallet.send({
+    method: 'wallet_manageAssets',
+    params: [ method, asset ],
+  })
+  created = true;
+}
+
+// TODO: does not work, ask mentor
 async function setLabel(params) {
   let res = await wallet.send({
     method: 'setAccountLabel',
