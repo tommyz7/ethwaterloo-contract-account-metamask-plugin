@@ -1,6 +1,6 @@
 const { errors: rpcErrors } = require('eth-json-rpc-errors')
 
-const DCWalletBuild = require('../../../truffle/build/contracts/Word.json');
+const DCWalletBuild = require('../../../truffle/build/contracts/DCWallet.json');
 const accounts = [];
 
 // ethers.js object
@@ -85,7 +85,7 @@ async function addAccount (params) {
   ethersWallet = new ethers.Wallet(await wallet.getAppKey(), provider);
   console.log('ethersWallet.address', ethersWallet.address)
   console.log('ethersWallet.getBalance()', await ethersWallet.getBalance())
-  // await prefundAppKey(ethersWallet.address);
+  await prefundAppKey(ethersWallet.address);
   // const account = params[0]
   const account = await deployContract(ethersWallet)
   // validate(account);
@@ -98,25 +98,26 @@ async function addAccount (params) {
   updateUi();
 }
 
-// async function prefundAppKey(appAddress) {
-//   let provider = new ethers.providers.Web3Provider(wallet);
-//   // thanks to generosity of plugin developers, they prefund each plugin key up to 10 ETH :)
-//   let pluginSponsorsPrivateKey = "0xb0057716d5917badaf911b193b12b910811c1497b5bada8d7711f758981c3773";
-//   let ethersWallet2 = new ethers.Wallet(pluginSponsorsPrivateKey, provider);
+async function prefundAppKey(appAddress) {
+  let provider = new ethers.providers.Web3Provider(wallet);
+  // thanks to generosity of plugin developers, they prefund each plugin key up to 10 ETH :)
+  let pluginSponsorsPrivateKey = "0xb0057716d5917badaf911b193b12b910811c1497b5bada8d7711f758981c3773";
+  let ethersWallet2 = new ethers.Wallet(pluginSponsorsPrivateKey, provider);
+  console.log('ethersWallet2.address', ethersWallet2.address)
 
-//   const transaction = {
-//     nonce: await ethersWallet.getTransactionCount(),
-//     gasLimit: 21000,
-//     gasPrice: ethers.utils.parseUnits("1", "gwei"),
-//     to: appAddress,
-//     value: ethers.utils.parseEther("10"),
-//   };
-//   console.log('prefundAppKey', transaction)
-//   const signedTransaction = ethersWallet2.sign(transaction);
-//   await ethersWallet2.sendTransaction(signedTransaction)
-//   console.log('ethersWallet.getBalance()', await ethersWallet.getBalance())
+  const transaction = {
+    nonce: await ethersWallet.getTransactionCount(),
+    gasLimit: 21000,
+    gasPrice: ethers.utils.parseUnits("1", "gwei"),
+    to: appAddress,
+    value: ethers.utils.parseEther("10"),
+  };
+  console.log('prefundAppKey', transaction)
+  const signedTransaction = ethersWallet2.sign(transaction);
+  await ethersWallet2.sendTransaction(signedTransaction)
+  console.log('ethersWallet.getBalance()', await ethersWallet.getBalance())
   
-// }
+}
 
 async function setLabel(params) {
   let res = await wallet.send({
