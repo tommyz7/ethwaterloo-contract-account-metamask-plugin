@@ -65,6 +65,7 @@ const origin = 'http://localhost:8089/package.json'
 const pluginOrigin = `wallet_plugin_${origin}`
 
 const connectAndInstallButton = document.querySelector('button.connectAndInstall')
+const resetCountdownButton = document.querySelector('button.resetCountdown')
 //const connectButton = document.querySelector('button.connect')
 //const addButton = document.querySelector('button.add')
 //const tipButton = document.querySelector('button.tip')
@@ -73,6 +74,7 @@ const connectAndInstallButton = document.querySelector('button.connectAndInstall
 //defi-custody poc
 const createAccountButton = document.querySelector('button.createAccount')
 createAccountButton.addEventListener('click', add)
+resetCountdownButton.addEventListener('click', reset)
 
 
 connectAndInstallButton.addEventListener('click', connectAndInstall)
@@ -132,6 +134,12 @@ async function connectAndInstall () {
   })
   
 }
+
+
+async function reset() {
+  console.log('reset');
+}
+
 
 async function connect () {
   await ethereum.send({
