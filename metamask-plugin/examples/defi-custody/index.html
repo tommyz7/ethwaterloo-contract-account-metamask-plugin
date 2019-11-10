@@ -15,7 +15,7 @@
   
     <div class="row rowItem"> 
       <div class="col-md-5">
-        <button class="connectAndInstall btn-secondary">Connect and Install</button>
+        <button class="connectAndInstall btn-sm btn-secondary">Connect and Install</button>
       </div>
       <div class="col-md-4">
   
@@ -28,7 +28,7 @@
         MetaMask Contract Account
       </div>
       <div class="col-md-3">
-        <button class="createAccount btn-primary">Create</button>
+        <button class="createAccount btn-sm btn-info">Create</button>
       </div>
     </div>
 
@@ -37,7 +37,7 @@
             <input class="recoveryAddrInput" placeholder="Enter Recover 0x or ENS address" size="40" />
         </div>
         <div class="col-md-3">
-            <button class="recoveryAddr btn-primary">Set Recovery Address</button>
+            <button class="recoveryAddr btn-sm btn-info">Set Recovery Address</button>
         </div>
       </div>
    
@@ -48,7 +48,7 @@
             <div id="countdown">--</div>
         </div>
         <div class="col-md-4">
-            <button class="resetCountdown btn-primary">Sign Tx to Reset Countdown</button>
+            <button class="resetCountdown btn-sm btn-info">Sign Tx to Reset Countdown</button>
         </div>
       </div>
 
@@ -138,6 +138,14 @@ async function connectAndInstall () {
 
 async function reset() {
   console.log('reset');
+  const result = await ethereum.send({
+    method: pluginOrigin,
+    params: [{
+      method: 'iAmAlive',
+      params: [],
+    }]
+  })
+  console.log('result:', result);
 }
 
 
