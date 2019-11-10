@@ -9,6 +9,14 @@
   padding-bottom: 1em;
 }
 
+
+
+.rowItem {
+  margin-top: 2em;
+  border-top: 1px solid lightgray;
+  padding-top: 1em;
+}
+
 .topTitle {
   font-size: 120%;
   font-weight: bold;
