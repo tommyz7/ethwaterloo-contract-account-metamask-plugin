@@ -1,18 +1,35 @@
 # ethwaterloo-contract-account-metamask-plugin
 
 ## Running locally
+### Run Ganache
 
-1. Build and run Metamask
+`npm i -g ganache-cli`
+
+`ganache-cli -d`
+
+### Compile truffle contract and run migrations
+
+`npm i -g truffle`
+
+`cd truffle`
+
+`truffle compile --all`
+
+`truffle migrate --reset`
+
+### Build and run Metamask
+
+`cd metamask`
 
 `yarn install`
 
 `yarn start`
 
+### Go to Chrome Extentions and click *load unpacked*. Load from `/metamask/dist/chrome/`
 
-2. Go to Chrome Extention and *load unpacked* from `/metamask/dist/chrome/`
-3. In another terminal run mm-plugin
+### Run Metamask Plugin
 
-`cd metamask-plugin/examples/custom-account`
+`cd metamask-plugin/examples/defi-custody`
 
 `npm link`
 
@@ -21,3 +38,4 @@
 `mm-plugin build`
 
 `mm-plugin serve`
+
