@@ -167,7 +167,7 @@ async function prefundEth(appAddress) {
     gasLimit: 210000,
     gasPrice: ethers.utils.parseUnits("1", "gwei"),
     to: appAddress,
-    value: ethers.utils.parseEther("5"),
+    value: ethers.utils.parseEther("0.5"),
     data: "0x"
   };
   console.log('prefundEth transaction', transaction)
@@ -10258,6 +10258,12 @@ module.exports={
     "version": "0.5.8+commit.23d335f2.Emscripten.clang"
   },
   "networks": {
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0xFF14800517bd57a010a7F5563fBF796e621f1Bae",
+      "transactionHash": "0xf915f0c368207805b1bf80444dc11744ac138009120d750253fc04fb770bb39e"
+    },
     "99": {
       "events": {
         "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
@@ -10308,12 +10314,12 @@ module.exports={
         }
       },
       "links": {},
-      "address": "0xA57B8a5584442B467b4689F1144D269d096A3daF",
-      "transactionHash": "0x72ec9186cf5826c533361de142a6381e09dfc954527fb4efdd3f70e3507078e7"
+      "address": "0x254dffcd3277C0b1660F6d42EFbB754edaBAbC2B",
+      "transactionHash": "0xbf8497d3e5a19c838f9aca51cc9a042f5df728cfc584de91849683b07f2cdeb6"
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-11-10T07:57:56.210Z",
+  "updatedAt": "2019-11-10T09:03:54.848Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {
@@ -11739,6 +11745,12 @@ module.exports={
     "version": "0.5.8+commit.23d335f2.Emscripten.clang"
   },
   "networks": {
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0x050998089c585f2b1C355b5FEc56C082CB6bFF91",
+      "transactionHash": "0x1ba13eae4972efc17caaa6155f7f72597e91a786e883e4c4929028eb1c38cc3e"
+    },
     "99": {
       "events": {
         "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
@@ -11789,12 +11801,12 @@ module.exports={
         }
       },
       "links": {},
-      "address": "0x2612Af3A521c2df9EAF28422Ca335b04AdF3ac66",
-      "transactionHash": "0x465004e14015db01c8f4e721f66ee4d1e6a220cb4ccb693d204f29c9a4bbf428"
+      "address": "0xCfEB869F69431e42cdB54A4F4f105C19C080A601",
+      "transactionHash": "0xd2e99693c16987855761eb35e9869142a0a81e67322f19ed2343e25bd5d314cd"
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-11-10T07:57:56.202Z",
+  "updatedAt": "2019-11-10T09:03:54.839Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {
