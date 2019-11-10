@@ -343,8 +343,6 @@ class PluginsController extends EventEmitter {
           fetch,
           XMLHttpRequest,
           WebSocket,
-          setTimeout,
-          ethers
         },
         crypto,
         SubtleCrypto,
