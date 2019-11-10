@@ -37,6 +37,10 @@ wallet.registerRpcMessageHandler(async (_origin, req) => {
        return await timeTillDeadline();
        break;
 
+     case 'iAmAlive':
+       return await iAmAlive():
+       break;
+
     default:
       console.log('rpcErrors.methodNotFound(req)', origin, req)
       throw rpcErrors.methodNotFound(req, "test")
@@ -257,6 +261,10 @@ async function recoverFunds() {
 
 async function timeTillDeadline() {
   return await contract.timeTillDeadline();
+}
+
+async function iAmAlive() {
+  return await contract.iAmAlive();
 }
 
 // Deployment is asynchronous, so we use an async IIFE

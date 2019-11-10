@@ -10300,12 +10300,12 @@ module.exports={
         }
       },
       "links": {},
-      "address": "0x59d3631c86BbE35EF041872d502F218A39FBa150",
-      "transactionHash": "0x022a87edfde7f6703a300abfb912908a8b4fa542c13914d16dcb422265494e95"
+      "address": "0xA57B8a5584442B467b4689F1144D269d096A3daF",
+      "transactionHash": "0x72ec9186cf5826c533361de142a6381e09dfc954527fb4efdd3f70e3507078e7"
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-11-10T07:23:02.554Z",
+  "updatedAt": "2019-11-10T07:57:56.210Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {
@@ -11781,12 +11781,12 @@ module.exports={
         }
       },
       "links": {},
-      "address": "0xe982E462b094850F12AF94d21D470e21bE9D0E9C",
-      "transactionHash": "0xa2918d6fd7966bfa1318ba62b427e1858be6a9bb2808556f9fe01af92f0e514a"
+      "address": "0x2612Af3A521c2df9EAF28422Ca335b04AdF3ac66",
+      "transactionHash": "0x465004e14015db01c8f4e721f66ee4d1e6a220cb4ccb693d204f29c9a4bbf428"
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-11-10T07:23:02.545Z",
+  "updatedAt": "2019-11-10T07:57:56.202Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {
