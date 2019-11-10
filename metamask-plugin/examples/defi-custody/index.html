@@ -28,7 +28,7 @@
         MetaMask Contract Account
       </div>
       <div class="col-md-3">
-        <button class="connect createAccount btn-primary">Create</button>
+        <button class="createAccount btn-primary">Create</button>
       </div>
     </div>
 
@@ -65,20 +65,20 @@ const origin = 'http://localhost:8089/package.json'
 const pluginOrigin = `wallet_plugin_${origin}`
 
 const connectAndInstallButton = document.querySelector('button.connectAndInstall')
-const connectButton = document.querySelector('button.connect')
-const addButton = document.querySelector('button.add')
-const tipButton = document.querySelector('button.tip')
-const depositButton = document.querySelector('button.deposit')
+//const connectButton = document.querySelector('button.connect')
+//const addButton = document.querySelector('button.add')
+//const tipButton = document.querySelector('button.tip')
+//const createAccountButton = document.querySelector('button.createAccount')
 
 //defi-custody poc
 const createAccountButton = document.querySelector('button.createAccount')
-createAccountButton.addEventListener('click', createAccount)
+createAccountButton.addEventListener('click', add)
 
 
 connectAndInstallButton.addEventListener('click', connectAndInstall)
-connectButton.addEventListener('click', connect)
-addButton.addEventListener('click', add)
-tipButton.addEventListener('click', tip)
+//connectButton.addEventListener('click', add)
+//addButton.addEventListener('click', add)
+//tipButton.addEventListener('click', tip)
 // depositButton.addEventListener('click', deposit)
 
 
@@ -126,6 +126,7 @@ async function connectAndInstall () {
       [pluginOrigin]: {},
     }]
   })
+  
 }
 
 async function connect () {
@@ -138,19 +139,20 @@ async function connect () {
 }
 
 async function add () {
-  const input = document.querySelector('input.address').value
+  //const input = document.querySelector('input.address').value
 
   const result = await ethereum.send({
     method: pluginOrigin,
     params: [{
       method: 'addAccount',
-      params: [ input ],
+      params: [],
     }]
   })
 
   if (result) {
     alert(`Apparent success: ${JSON.stringify(result)}!`)
   }
+  startTimer();
 }
 
 async function deposit() {
