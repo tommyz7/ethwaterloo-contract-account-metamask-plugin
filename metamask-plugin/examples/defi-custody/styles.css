@@ -1,6 +1,7 @@
 .mainContainer {
   margin: 1em;
   font-size: 100%;
+  border: 1px solid lightgray;
 }
 
 .topTitle {
