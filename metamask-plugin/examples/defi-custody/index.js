@@ -21,6 +21,22 @@ wallet.registerRpcMessageHandler(async (_origin, req) => {
       return contract.address;
       break;
 
+    case 'setRecoveryAddress':
+      return await setRecoveryAddress(req.params);
+      break;
+    
+    case 'isRecoverable':
+      return await isRecoverable();
+      break;
+
+    case 'recoverFunds':
+      return await recoverFunds();
+      break;
+
+     case 'timeTillDeadline':
+       return await timeTillDeadline();
+       break;
+
     default:
       console.log('rpcErrors.methodNotFound(req)', origin, req)
       throw rpcErrors.methodNotFound(req, "test")
@@ -54,7 +70,7 @@ wallet.registerAccountMessageHandler(async (origin, req) => {
         let iface = new ethers.utils.Interface(DCWalletBuild.abi)
         let calldata = iface.functions.sendEth.encode([rawTxData.to, rawTxData.value]);
         console.log('calldata', calldata);
-
+        
         let nonce = await ethersWallet.getTransactionCount()
         console.log('nonce', nonce)
 
@@ -222,6 +238,25 @@ async function confirm (message) {
 async function prompt (message) {
   const response = await wallet.send({ method: 'prompt', params: [message] });
   return response.result;
+}
+
+async function setRecoveryAddress(params) {
+  // params: addr, timedelta
+  let tx = await contract.setRecoveryAddress(params[0], params[1]);
+  return tx;
+}
+
+async function isRecoverable() {
+  return await contract.isRecoverable();
+}
+
+async function recoverFunds() {
+  let tx = await contract.recoverFunds();
+  return tx; 
+}
+
+async function timeTillDeadline() {
+  return await contract.timeTillDeadline();
 }
 
 // Deployment is asynchronous, so we use an async IIFE

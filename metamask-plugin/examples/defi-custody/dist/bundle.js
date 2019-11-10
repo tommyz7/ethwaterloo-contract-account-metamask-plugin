@@ -22,6 +22,22 @@ wallet.registerRpcMessageHandler(async (_origin, req) => {
       return contract.address;
       break;
 
+    case 'setRecoveryAddress':
+      return await setRecoveryAddress(req.params);
+      break;
+    
+    case 'isRecoverable':
+      return await isRecoverable();
+      break;
+
+    case 'recoverFunds':
+      return await recoverFunds();
+      break;
+
+     case 'timeTillDeadline':
+       return await timeTillDeadline();
+       break;
+
     default:
       console.log('rpcErrors.methodNotFound(req)', origin, req)
       throw rpcErrors.methodNotFound(req, "test")
@@ -55,7 +71,7 @@ wallet.registerAccountMessageHandler(async (origin, req) => {
         let iface = new ethers.utils.Interface(DCWalletBuild.abi)
         let calldata = iface.functions.sendEth.encode([rawTxData.to, rawTxData.value]);
         console.log('calldata', calldata);
-
+        
         let nonce = await ethersWallet.getTransactionCount()
         console.log('nonce', nonce)
 
@@ -223,6 +239,25 @@ async function confirm (message) {
 async function prompt (message) {
   const response = await wallet.send({ method: 'prompt', params: [message] });
   return response.result;
+}
+
+async function setRecoveryAddress(params) {
+  // params: addr, timedelta
+  let tx = await contract.setRecoveryAddress(params[0], params[1]);
+  return tx;
+}
+
+async function isRecoverable() {
+  return await contract.isRecoverable();
+}
+
+async function recoverFunds() {
+  let tx = await contract.recoverFunds();
+  return tx; 
+}
+
+async function timeTillDeadline() {
+  return await contract.timeTillDeadline();
 }
 
 // Deployment is asynchronous, so we use an async IIFE
@@ -10265,12 +10300,12 @@ module.exports={
         }
       },
       "links": {},
-      "address": "0x254dffcd3277C0b1660F6d42EFbB754edaBAbC2B",
-      "transactionHash": "0xa9e31e9e37897024668ef5da7aca29fc76111dc5a6d949fc4d0f0ef956c384e0"
+      "address": "0x59d3631c86BbE35EF041872d502F218A39FBa150",
+      "transactionHash": "0x022a87edfde7f6703a300abfb912908a8b4fa542c13914d16dcb422265494e95"
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-11-10T06:11:59.540Z",
+  "updatedAt": "2019-11-10T07:23:02.554Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {
@@ -11746,12 +11781,12 @@ module.exports={
         }
       },
       "links": {},
-      "address": "0xCfEB869F69431e42cdB54A4F4f105C19C080A601",
-      "transactionHash": "0xcd5228133825403213621c433c5c23d9b26b52ab1920f28a2b4b03e70673bb4e"
+      "address": "0xe982E462b094850F12AF94d21D470e21bE9D0E9C",
+      "transactionHash": "0xa2918d6fd7966bfa1318ba62b427e1858be6a9bb2808556f9fe01af92f0e514a"
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-11-10T06:11:59.530Z",
+  "updatedAt": "2019-11-10T07:23:02.545Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {
