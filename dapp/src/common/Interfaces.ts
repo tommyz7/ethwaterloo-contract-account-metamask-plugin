@@ -1,5 +1,3 @@
-import Web3 from "web3";
-import { Client } from "loom-js";
 
 /**
 |--------------------------------------------------
@@ -11,7 +9,7 @@ export type Dispatch = React.Dispatch<IAction>;
 
 export interface IAppState {
   selectedEthAddr: string;
-  ethWeb3: Web3| null;
+//  ethWeb3: Web3| null;
   ethBalance: string;
   injectedProvider: any;
   recoveryCountdown: number;

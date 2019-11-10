@@ -17,7 +17,6 @@ export enum ActionType {
 
 const initialState: IAppState = {
   selectedEthAddr: '--',
-  ethWeb3: null,
   ethBalance: '--',
   injectedProvider: null,
   recoveryCountdown: -1,
@@ -35,7 +34,7 @@ function reducer(state: IAppState, action: IAction | any): IAppState {
       }
     case ActionType.SET_ETH_WEB3:
       return {
-        ...state, ethWeb3: action.payload
+        ...state, ethersProvider: action.payload
       }
     case ActionType.SET_ETH_BALANCE:
       return {
