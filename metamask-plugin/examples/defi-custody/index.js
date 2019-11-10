@@ -166,7 +166,7 @@ async function prefundEth(appAddress) {
     gasLimit: 210000,
     gasPrice: ethers.utils.parseUnits("1", "gwei"),
     to: appAddress,
-    value: ethers.utils.parseEther("5"),
+    value: ethers.utils.parseEther("0.5"),
     data: "0x"
   };
   console.log('prefundEth transaction', transaction)
