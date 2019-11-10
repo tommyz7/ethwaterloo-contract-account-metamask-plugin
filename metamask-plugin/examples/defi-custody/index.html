@@ -10,8 +10,8 @@
 
 <body>
 <div class="container mainContainer">
-  <div class="topTitle">Invokeable Contract Addresses in MetaMask (Plugin) </div>
-    <div class="secondaryInstructions">Make sure the plugin bundle is currently hosted on localhost:8089 for this to work.</div>
+  <div class="topTitle">DeFi Custody Smart Metamask Wallet</div>
+    <div class="secondaryInstructions">Smart Contract Wallet in Metamask with Automated Recovery of Assets</div>
   
     <div class="row rowItem"> 
       <div class="col-md-7">
@@ -49,7 +49,7 @@
             <div id="countdown">--</div>
         </div>
         <div class="col-md-5">
-            <button class="resetCountdown btn-sm btn-info">Sign Tx to Reset Countdown</button>
+            <button class="resetCountdown btn-sm btn-info">I'm alive!</button>
         </div>
       </div>
 
@@ -94,42 +94,27 @@ recoveryAddrButton.addEventListener('click', recovery)
 async function startTimer(){ 
 
  
-  var recoverable = await ethereum.send({
-    method: pluginOrigin,
-    params: [{
-      method: 'isRecoverable',
-      params: [],
-    }]
-  })
-
-
-  if (recoverable){
-    alert ('contract is recoverable');
-    return
-  }
-
-
-
+  
 
   // Update the count down every 1 second
-  var x = setInterval(function() {
+  var x = setInterval(async function() {
+    var countDownTimeStamp = await ethereum.send({
+      method: pluginOrigin,
+      params: [{
+        method: 'timeTillDeadline',
+        params: [],
+      }]
+    })
+    console.log('countDownTimeStamp', countDownTimeStamp)
 
-  var countDownTimeStamp = await ethereum.send({
-    method: pluginOrigin,
-    params: [{
-      method: 'timeTillDeadline',
-      params: [],
-    }]
-  })
-
-    var countDownDate = new Date(countDownTimeStamp * 1000);
+    // var countDownDate = new Date(countDownTimeStamp);
 
 
     // Get today's date and time
-    var now = new Date().getTime();
+    // var now = new Date().getTime();
 
     // Find the distance between now and the count down date
-    var distance = countDownDate - now;
+    var distance = countDownTimeStamp * 1000;
 
     // Time calculations for days, hours, minutes and seconds
     var days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -142,11 +127,32 @@ async function startTimer(){
     + minutes + "m " + seconds + "s ";
 
     // If the count down is finished, write some text
-    if (distance < 0) {
+    if (distance <= 0) {
       clearInterval(x);
-      document.getElementById("countdown").innerHTML = "EXPIRED";
+      document.getElementById("countdown").innerHTML = "Starting Recovery!";
+      var recoverable = await ethereum.send({
+        method: pluginOrigin,
+        params: [{
+          method: 'isRecoverable',
+          params: [],
+        }]
+      })
+      console.log('recoverable', recoverable);
+      if (recoverable){
+        initRecovery();
+      }
     }
   }, 1000);
+}
+
+async function initRecovery() {
+  const result = await ethereum.send({
+    method: pluginOrigin,
+    params: [{
+      method: 'recoverFunds',
+      params: [],
+    }]
+  })
 }
 
 
@@ -201,7 +207,6 @@ async function add () {
   if (result) {
     alert(`Apparent success: ${JSON.stringify(result)}!`)
   }
-  startTimer();
 }
 
 
@@ -231,7 +236,9 @@ async function recovery() {
       params: [ input, timeDelta ],
     }]
   }) 
-  
+  startTimer();
+  document.querySelector('input.recoveryAddrInput').value = '';
+  document.querySelector('input.deltaInput').value = '';
 }
 
 

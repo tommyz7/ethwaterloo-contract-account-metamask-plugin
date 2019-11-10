@@ -260,7 +260,8 @@ async function recoverFunds() {
 }
 
 async function timeTillDeadline() {
-  return await contract.timeTillDeadline();
+  let t = (await contract.timeTillDeadline()).toNumber();
+  return t;
 }
 
 async function iAmAlive() {
