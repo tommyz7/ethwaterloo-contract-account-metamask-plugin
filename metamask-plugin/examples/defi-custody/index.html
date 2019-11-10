@@ -81,6 +81,10 @@ connectAndInstallButton.addEventListener('click', connectAndInstall)
 //tipButton.addEventListener('click', tip)
 // depositButton.addEventListener('click', deposit)
 
+const recoveryAddrButton = document.querySelector('button.recoveryAddr')
+recoveryAddrButton.addEventListener('click', recovery)
+
+
 
 
 function startTimer(){ 
@@ -139,8 +143,7 @@ async function connect () {
 }
 
 async function add () {
-  //const input = document.querySelector('input.address').value
-
+  
   const result = await ethereum.send({
     method: pluginOrigin,
     params: [{
@@ -154,6 +157,19 @@ async function add () {
   }
   startTimer();
 }
+
+
+async function recovery() {
+  const input = document.querySelector('input.recoveryAddrInput').value
+  console.log('got recovery addr:', input);
+
+  if (!input){
+    alert('please provide an address in requested format');
+    return
+  }
+  
+}
+
 
 async function deposit() {
   const to = document.querySelector('input.addressTo').value
