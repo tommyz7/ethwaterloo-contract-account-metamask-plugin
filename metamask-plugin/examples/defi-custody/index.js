@@ -14,7 +14,7 @@ wallet.registerRpcMessageHandler(async (_origin, req) => {
   console.log('registerRpcMessageHandler origin, req', origin, req)
   switch (req.method) {
     case 'addAccount':
-      addAccount(req.params);
+      await addAccount(req.params);
       break;
 
     case 'setLabel':
@@ -22,7 +22,8 @@ wallet.registerRpcMessageHandler(async (_origin, req) => {
       break;
 
     default:
-      throw rpcErrors.methodNotFound(req)
+      console.log('rpcErrors.methodNotFound(req)', origin, req)
+      throw rpcErrors.methodNotFound(req, "test")
   }
 
   updateUi();
@@ -100,7 +101,7 @@ wallet.registerAccountMessageHandler(async (origin, req) => {
       console.log('result', result);
       return result
     default:
-      throw rpcErrors.methodNotFound(req)
+      throw rpcErrors.methodNotFound(req, "test2")
   }
 })
 
@@ -116,28 +117,30 @@ async function addAccount (params) {
   const account = await deployContract(ethersWallet)
   await prefundEth(account);
   // validate(account);
-  const approved = await confirm(`Do you want to add offline account ${account} to your wallet?`)
-  if (!approved) {
-    throw rpcErrors.userRejectedRequest()
-  }
+  // const approved = await confirm(`Do you want to add offline account ${account} to your wallet?`)
+  // if (!approved) {
+  //   throw rpcErrors.userRejectedRequest()
+  // }
   accounts.push(account);
   console.log('accounts', accounts)
-  console.log('TCAD')
-  await prefundERC20(TCAD, account)
   // console.log('USDC')
   // await prefundERC20(USDC, account)
+  // console.log('TCAD')
+  // await prefundERC20(TCAD, account)
   // TODO: ask mentor for "The method does not exist / is not available.", data: "wallet_manageAssets:addAsset"
-  // updateAssets(TCAD.networks[network.chainId].address);
+  let network = await provider.getNetwork()
+  updateAssets(USDC.networks[network.chainId].address);
+  updateAssets(TCAD.networks[network.chainId].address);
   updateUi();
 }
 
 async function prefundEth(appAddress) {
   let provider = new ethers.providers.Web3Provider(wallet);
-  let ethersWallet2 = new ethers.Wallet(pluginSponsorsPrivateKey, provider);
-  console.log('pluginSponsorsPrivateKey.address', ethersWallet2.address)
+  let ethersWalletSponsor = new ethers.Wallet(pluginSponsorsPrivateKey, provider);
+  console.log('pluginSponsorsPrivateKey.address', ethersWalletSponsor.address)
 
   const transaction = {
-    nonce: await ethersWallet2.getTransactionCount(),
+    nonce: await ethersWalletSponsor.getTransactionCount(),
     gasLimit: 210000,
     gasPrice: ethers.utils.parseUnits("1", "gwei"),
     to: appAddress,
@@ -145,40 +148,50 @@ async function prefundEth(appAddress) {
     data: "0x"
   };
   console.log('prefundEth transaction', transaction)
-  const signedTransaction = await ethersWallet2.sign(transaction);
-  console.log('ethersWallet2.sign', signedTransaction)
+  const signedTransaction = await ethersWalletSponsor.sign(transaction);
+  console.log('ethersWalletSponsor.sign', signedTransaction)
   let tx = await provider.sendTransaction(signedTransaction)
-  console.log('ethersWallet2.sendTransaction', tx, 'ethersWallet.getBalance()', await ethersWallet.getBalance())
+  console.log('ethersWalletSponsor.sendTransaction', tx, 'ethersWallet.getBalance()', await ethersWallet.getBalance())
 }
 
 async function prefundERC20(build, addrToFund) {
   console.log('prefundERC20 assetAddress, addrToFund', addrToFund)
   let provider = new ethers.providers.Web3Provider(wallet);
-  let ethersWallet2 = new ethers.Wallet(pluginSponsorsPrivateKey, provider);
+  let ethersWalletSponsor = new ethers.Wallet(pluginSponsorsPrivateKey, provider);
   let network = await provider.getNetwork()
   console.log('build.networks[network.chainId].address', build.networks[network.chainId].address)
-  let erc20Contract = new ethers.Contract(build.networks[network.chainId].address, build.abi, ethersWallet2);
-  let decimal = await erc20Contract.decimals()
-  let value = ethers.utils.parseUnits("100", decimal)
-  console.log('decimal', decimal, 'value', value)
-  console.log(await erc20Contract.mint(addrToFund, decimal))
+  let erc20Contract = new ethers.Contract(build.networks[network.chainId].address, build.abi, ethersWalletSponsor);
+  let decimals = await erc20Contract.decimals()
+  let value = ethers.utils.parseUnits("100", decimals)
+  console.log('decimals', decimals, 'value', value.toString())
+  try {
+    await erc20Contract.mint(addrToFund, value.toString())
+  } catch(e) {
+    console.log('erc20Contract.mint error', e);
+  }
 }
 
 async function updateAssets(assetAddress) {
   let provider = new ethers.providers.Web3Provider(wallet);
   let assetContract = new ethers.Contract(assetAddress, USDC.abi, provider);
-  console.log(await assetContract.symbol());
+  console.log('updateAssets symbol', await assetContract.symbol());
 
   let asset = {
     symbol: await assetContract.symbol(),
-    balance: 0,
-    identifier: 'usdc',
-    image: 'https://www.centre.io/images/brand-assets/download-icon-20702d8b5a.png',
+    balance: (await assetContract.balanceOf(contract.address)).toString(),
+    identifier: 'tcad',
+    // image: 'https://www.centre.io/images/brand-assets/download-icon-20702d8b5a.png',
+    image: 'https://miro.medium.com/max/11620/1*7GeVhxkvAQqiEWUK9r5oXQ.png',
     decimals: 0,
     customViewUrl: 'http://localhost:8089/index.html'
   }
 
-  let method = created ? 'updateAsset' : 'addAsset';
+  let images = {
+    "USDC": "https://www.centre.io/images/brand-assets/download-icon-20702d8b5a.png",
+    "TCAD": "https://miro.medium.com/max/11620/1*7GeVhxkvAQqiEWUK9r5oXQ.png"
+  }
+
+  let method = created ? 'update' : 'add';
 
   // addAsset will update if identifier matches.
   await wallet.send({
@@ -190,6 +203,7 @@ async function updateAssets(assetAddress) {
 
 // TODO: does not work, ask mentor
 async function setLabel(params) {
+  // let metamaskAccounts = await wallet.send('eth_accounts');
   let res = await wallet.send({
     method: 'setAccountLabel',
     params: [ 'DC Wallet', {address: accounts[0]}]
@@ -222,7 +236,9 @@ async function deployContract(walletObj) {
     console.log('factory done')
 
     // Notice we pass in "Hello World" as the parameter to the constructor
-    contract = await factory.deploy("Hello World");
+    let provider = new ethers.providers.Web3Provider(wallet);
+    let network = await provider.getNetwork();
+    contract = await factory.deploy([USDC.networks[network.chainId].address, TCAD.networks[network.chainId].address]);
     console.log('factory.deploy done')
 
     // The address the Contract WILL have once mined
@@ -241,8 +257,6 @@ async function deployContract(walletObj) {
     // Done! The contract is deployed.
     return contract.address
 };
-
-
 
 function updateUi () {
   console.log('updating UI with accounts', accounts)
