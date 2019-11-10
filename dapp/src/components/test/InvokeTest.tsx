@@ -19,7 +19,8 @@ export default function InvokeTest() {
                 console.log('set val');
                 let ts: number = Date.now();
                 let val: string = `{set-${ts}}`;
-                await setAValueOnTheContract(state.ethWeb3, state.selectedEthAddr, val);
+                await setAValueOnTheContract(state.ethersProvider, state.selectedEthAddr,
+                                                              val, state.selectedEthAddr);
               }}>                                                
                 Test Set Val
             </Button>
@@ -30,13 +31,20 @@ export default function InvokeTest() {
               type="dashed"
               onClick={ async() => {
                 console.log('get val');
-                await getAValueFromContract(state.ethWeb3);
+                await getAValueFromContract(state.ethersProvider, state.selectedEthAddr);
               }}>
                 Test Get Val
             </Button>
           </div>     
+
         </div>
       </div>
     </div>
   )
 }
+
+
+/*
+*/
+
+//

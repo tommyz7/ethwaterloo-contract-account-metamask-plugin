@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@portis/web3": "^2.0.0-beta.43",
     "@reach/router": "^1.2.1",
     "@types/dotenv": "^6.1.1",
     "@types/jest": "24.0.11",
@@ -16,17 +15,14 @@
     "antd": "^3.20.1",
     "axios": "^0.19.0",
     "dotenv": "^7.0.0",
-    "ethers": "^4.0.37",
+    "ethers": "^4.0.39",
     "lodash": "^4.17.15",
-    "loom-js": "^1.55.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-scripts": "2.1.8",
     "react-toastify": "^5.1.0",
     "typeface-roboto": "^0.0.54",
-    "typescript": "3.4.3",
-    "web3": "1.0.0-beta.34",
-    "web3-react": "^5.0.4"
+    "typescript": "3.4.3"
   },
   "scripts": {
     "start:dev": "universal-login start:dev",

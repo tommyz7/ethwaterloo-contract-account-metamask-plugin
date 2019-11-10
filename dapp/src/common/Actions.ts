@@ -4,6 +4,7 @@ import Axios from "axios";
 import DLContract from './../contracts/DCWallet.json'
 import Web3 from "web3";
 import { loadTokenContract } from "../utils/EthUtil.js";
+import { ethers } from "ethers";
 
 
 export const notify = (msg: string, success?: boolean) => {
@@ -23,15 +24,15 @@ export const notifyWarn = (msg: string) => {
 };
 
 
-export const setAValueOnTheContract = async(web3: Web3, fromAddr: string, stringVal: string) => {
-  let contractAddr: string = '0xedd06b70322E8B1B5dD7Be7673D3E394a14996cc';
+export const setAValueOnTheContract = async(ethersProvider: any, fromAddr: string, 
+                                              stringVal: string, contractAddr: string) => {
   
-  console.log("web3:", web3);
+  console.log("ethers provider:", ethersProvider);
 
-  let dlContract = await loadTokenContract(web3, DLContract, contractAddr);
+  let dlContract = await loadTokenContract(ethersProvider, DLContract, contractAddr);
   console.log(dlContract);
 
-  const tx = await dlContract.methods.setValue(
+  const tx = await dlContract.setValue(
     stringVal
   )
     .send({
@@ -43,15 +44,11 @@ export const setAValueOnTheContract = async(web3: Web3, fromAddr: string, string
 }
 
 
-export const getAValueFromContract = async(web3: Web3) => {
-  let contractAddr: string = '0xedd06b70322E8B1B5dD7Be7673D3E394a14996cc';
-  
-  console.log("web3:", web3);
 
-  let dlContract = await loadTokenContract(web3, DLContract, contractAddr);
+export const getAValueFromContract = async(ethersProvider: any, contractAddr: string) => { 
+  let dlContract = await loadTokenContract(ethersProvider, DLContract, contractAddr);
   console.log(dlContract);
-
-  const val = await dlContract.methods.getValue().call();
+  const val = await dlContract.getValue();
 
   console.log('value returned from contract was:', val);
   notify('value returned from contract was:' + val);

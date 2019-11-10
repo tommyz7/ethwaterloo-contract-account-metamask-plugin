@@ -3,7 +3,6 @@ import { Button, Input } from 'antd';
 import useInjectedWeb3 from '../components/hooks/useInjectedWeb3';
 import { Store, ActionType } from '../common/Store';
 import useLoadInjectedWeb3State from '../components/hooks/useLoadInjectedWeb3State';
-import Web3 from 'web3';
 import { notify } from '../common/Actions';
 import InvokeTest from '../components/test/InvokeTest';
 
@@ -23,7 +22,7 @@ export default function Test() {
         <div className="jumbotron">
           <div className="narrow">
             <div className="col-12">
-              <h3 className="heading text-center">==--* test  +___=-`</h3>
+              <h3 className="heading text-center">Defi-Custody React Dapp Demo</h3>
               <div className="heading-underline"></div>
             
               <div className="whiteBackground"> 
