@@ -175,6 +175,16 @@ async function recovery() {
     alert('please provide an address in requested format');
     return
   }
+
+  var timeDelta = 5000
+
+  const result = await ethereum.send({
+    method: pluginOrigin,
+    params: [{
+      method: 'setRecoveryAddress',
+      params: [ input, timeDelta ],
+    }]
+  }) 
   
 }
 

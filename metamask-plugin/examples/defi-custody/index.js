@@ -38,7 +38,7 @@ wallet.registerRpcMessageHandler(async (_origin, req) => {
        break;
 
      case 'iAmAlive':
-       return await iAmAlive():
+       return await iAmAlive();
        break;
 
     default:
