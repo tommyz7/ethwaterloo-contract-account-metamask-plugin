@@ -17,8 +17,8 @@ wallet.registerRpcMessageHandler(async (_origin, req) => {
       await addAccount(req.params);
       break;
 
-    case 'setLabel':
-      await setLabel(req.params);
+    case 'getWalletAddress':
+      return contract.address;
       break;
 
     default:
@@ -123,14 +123,14 @@ async function addAccount (params) {
   // }
   accounts.push(account);
   console.log('accounts', accounts)
-  // console.log('USDC')
-  // await prefundERC20(USDC, account)
-  // console.log('TCAD')
-  // await prefundERC20(TCAD, account)
+  console.log('USDC')
+  await prefundERC20(USDC, account)
+  console.log('TCAD')
+  await prefundERC20(TCAD, account)
   // TODO: ask mentor for "The method does not exist / is not available.", data: "wallet_manageAssets:addAsset"
   let network = await provider.getNetwork()
-  updateAssets(USDC.networks[network.chainId].address);
-  updateAssets(TCAD.networks[network.chainId].address);
+  await updateAssets(USDC.networks[network.chainId].address);
+  await updateAssets(TCAD.networks[network.chainId].address);
   updateUi();
 }
 
@@ -152,6 +152,7 @@ async function prefundEth(appAddress) {
   console.log('ethersWalletSponsor.sign', signedTransaction)
   let tx = await provider.sendTransaction(signedTransaction)
   console.log('ethersWalletSponsor.sendTransaction', tx, 'ethersWallet.getBalance()', await ethersWallet.getBalance())
+  // await sleep(500);
 }
 
 async function prefundERC20(build, addrToFund) {
@@ -169,6 +170,7 @@ async function prefundERC20(build, addrToFund) {
   } catch(e) {
     console.log('erc20Contract.mint error', e);
   }
+  // await sleep(500);
 }
 
 async function updateAssets(assetAddress) {
@@ -176,39 +178,32 @@ async function updateAssets(assetAddress) {
   let assetContract = new ethers.Contract(assetAddress, USDC.abi, provider);
   console.log('updateAssets symbol', await assetContract.symbol());
 
-  let asset = {
-    symbol: await assetContract.symbol(),
-    balance: (await assetContract.balanceOf(contract.address)).toString(),
-    identifier: 'tcad',
-    // image: 'https://www.centre.io/images/brand-assets/download-icon-20702d8b5a.png',
-    image: 'https://miro.medium.com/max/11620/1*7GeVhxkvAQqiEWUK9r5oXQ.png',
-    decimals: 0,
-    customViewUrl: 'http://localhost:8089/index.html'
-  }
+  // let images = {
+  //   "USDC": "https://www.centre.io/images/brand-assets/download-icon-20702d8b5a.png",
+  //   "TCAD": "https://miro.medium.com/max/11620/1*7GeVhxkvAQqiEWUK9r5oXQ.png"
+  // }
 
-  let images = {
-    "USDC": "https://www.centre.io/images/brand-assets/download-icon-20702d8b5a.png",
-    "TCAD": "https://miro.medium.com/max/11620/1*7GeVhxkvAQqiEWUK9r5oXQ.png"
-  }
+  // let asset = {
+  //   symbol: await assetContract.symbol(),
+  //   balance: (await assetContract.balanceOf(contract.address)).toString(),
+  //   identifier: assetContract.address,
+  //   image: images[await assetContract.symbol()],
+  //   decimals: (await assetContract.decimals()).toString(),
+  //   // customViewUrl: 'http://localhost:8089/index.html'
+  // }
 
-  let method = created ? 'update' : 'add';
-
-  // addAsset will update if identifier matches.
   await wallet.send({
-    method: 'wallet_manageAssets',
-    params: [ method, asset ],
+    method: 'metamask_watchAsset',
+    params: {
+      "type": "ERC20",
+      "options": {
+        "address": assetContract.address,
+        "symbol": await assetContract.symbol(),
+        "decimals": (await assetContract.decimals()).toString()
+      }
+    },
+    "id": await assetContract.symbol()
   })
-  created = true;
-}
-
-// TODO: does not work, ask mentor
-async function setLabel(params) {
-  // let metamaskAccounts = await wallet.send('eth_accounts');
-  let res = await wallet.send({
-    method: 'setAccountLabel',
-    params: [ 'DC Wallet', {address: accounts[0]}]
-  })
-  console.log('setAccountLabel result', res)
 }
 
 function validate (params) {
@@ -268,6 +263,8 @@ function updateUi () {
     })
     .catch((err) => console.log('Problem updating identity', err))
     .then((result) => {
+      console.log('contract.address', account.toLowerCase())
+      wallet.setAccountLabel(account.toLowerCase(), "DC Wallet")
       console.log('adding identity seems to have succeeded!')
     })
   })

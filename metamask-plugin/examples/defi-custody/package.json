@@ -19,6 +19,7 @@
     },
     "initialPermissions": {
       "confirm": {},
+      "setAccountLabel": {},
       "wallet_manageAssets": {},
       "wallet_manageIdentities": {}
     }
