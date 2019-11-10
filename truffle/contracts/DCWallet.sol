@@ -31,6 +31,9 @@ contract DCWallet is Ownable {
     }
 
     function isRecoverable() public view returns (bool) {
+        if (recoveryAddress == address(0)) {
+            return false;
+        }
         return now >= lastCall + timedelta;
     }
 
@@ -53,9 +56,9 @@ contract DCWallet is Ownable {
         address payable _recoveryAddress,
         uint256 _timedelta
     ) public updateLastCall onlyOwner {
-        require(recoveryAddress != address(0),
+        require(_recoveryAddress != address(0),
             "#DCWallet setRecoveryAddress(): recoveryAddress cannot be zero address");
-        require(timedelta > 0,
+        require(_timedelta > 0,
             "#DCWallet setRecoveryAddress(): timedelta must be bigger than zero");
 
         recoveryAddress = _recoveryAddress;
