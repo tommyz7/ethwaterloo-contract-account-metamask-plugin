@@ -1,0 +1,30 @@
+.mainContainer {
+  margin: 1em;
+  font-size: 100%;
+}
+
+.topTitle {
+  font-size: 120%;
+}
+
+.secondaryInstructions {
+  color: grey;
+  font-size: 90%;
+}
+
+.displayBox {
+  margin: .5em;
+}
+
+.seeMe {
+  border: 1px solid rgb(220, 245, 253);
+}
+
+.alternateContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.rowItem {
+  margin-top: 1em;
+}

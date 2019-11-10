@@ -3,41 +3,59 @@
 <html>
 
 </head>
-  <title>defi-custody</title>
+<title>defi-custody</title>
+<link rel="stylesheet" href="bootstrap.min.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
+<div class="container mainContainer">
+  <div class="topTitle">Recoverable Countdown Account - SANDBOX</div>
+    <div class="secondaryInstructions">Make sure the plugin bundle is currently hosted on localhost:8089 for this to work.</div>
+  
+    <div class="row rowItem"> 
+      <div class="col-md-5">
+        <button class="connectAndInstall btn-secondary">Connect and Install</button>
+      </div>
+      <div class="col-md-4">
+  
+      </div>
+    </div>
 
-  <h1>Recoverable Countdown Account</h1>
-  <p>Make sure the plugin bundle is currently hosted on localhost:8089 for this to work.</p>
+  
+    <div class="row rowItem"> 
+      <div class="col-md-5">
+        MetaMask Contract Account
+      </div>
+      <div class="col-md-3">
+        <button class="connect createAccount btn-primary">Create</button>
+      </div>
+    </div>
 
-  <button class="connectAndInstall">Connect and Install</button>
-  <button class="connect">Connect Only</button>
+      <div class="row rowItem"> 
+        <div class="col-md-5">
+            <input class="recoveryAddrInput" placeholder="Enter Recover 0x or ENS address" size="40" />
+        </div>
+        <div class="col-md-3">
+            <button class="recoveryAddr btn-primary">Set Recovery Address</button>
+        </div>
+      </div>
+   
 
-  <hr />
-  <br>
-  <button class="createAccount">Create New MetaMask Contract Account</button>
-  <br>
-  <br>
-  <input class="recoveryAddrInput" placeholder="Enter Recover 0x or ENS address" size="40" />
-  <button class="recoveryAddr">Set Recovery Address</button>
 
-  <p>Recoverable Countdown timer: 4 Days, 3 Hours</p>
-  <button class="resetCountdown">Sign Tx to Reset Countdown</button>
+    <div class="row rowItem"> 
+        <div class="col-md-5">
+            <div id="countdown">--</div>
+        </div>
+        <div class="col-md-4">
+            <button class="resetCountdown btn-primary">Sign Tx to Reset Countdown</button>
+        </div>
+      </div>
 
-  <br/>
-  <hr />
+    </div>
+  </div>
+</div>
 
-  <br>
-  <input class="address" value="0x1df62f291b2e969fb0849d99d9ce41e2f137006e" placeholder="Ethereum Address"></input>
-  <button class="add">Add Offline Account to Wallet</button>
-
-  <br>
-  <button class="tip">Tip</button>
-
-  <!-- <input class="addressTo" placeholder="Ethereum Address For Deposit"></input>
-  <input class="value" placeholder="Value"></input>
-  <button class="deposit">Deposit</button> -->
 
 </body>
 
@@ -62,6 +80,38 @@ connectButton.addEventListener('click', connect)
 addButton.addEventListener('click', add)
 tipButton.addEventListener('click', tip)
 // depositButton.addEventListener('click', deposit)
+
+
+
+function startTimer(){ 
+  var countDownDate = new Date("Jan 5, 2021 15:37:25").getTime();
+
+  // Update the count down every 1 second
+  var x = setInterval(function() {
+
+    // Get today's date and time
+    var now = new Date().getTime();
+
+    // Find the distance between now and the count down date
+    var distance = countDownDate - now;
+
+    // Time calculations for days, hours, minutes and seconds
+    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    // Display the result in the element with id="demo"
+    document.getElementById("countdown").innerHTML = days + "d " + hours + "h "
+    + minutes + "m " + seconds + "s ";
+
+    // If the count down is finished, write some text
+    if (distance < 0) {
+      clearInterval(x);
+      document.getElementById("countdown").innerHTML = "EXPIRED";
+    }
+  }, 1000);
+}
 
 
 async function createAccount () {
