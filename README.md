@@ -39,3 +39,4 @@
 
 `mm-plugin serve`
 
+### Open `http://localhost:8089` and enjoy
