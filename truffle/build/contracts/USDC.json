@@ -1432,11 +1432,11 @@
       },
       "links": {},
       "address": "0xCfEB869F69431e42cdB54A4F4f105C19C080A601",
-      "transactionHash": "0x524822f58b0292718d74d9581070cc883a62ff35c4c3a0d77676e2d2e0c1e07e"
+      "transactionHash": "0xcd5228133825403213621c433c5c23d9b26b52ab1920f28a2b4b03e70673bb4e"
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-11-10T02:13:38.775Z",
+  "updatedAt": "2019-11-10T06:11:59.530Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {
