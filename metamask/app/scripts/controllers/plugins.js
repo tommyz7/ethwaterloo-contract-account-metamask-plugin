@@ -1,11 +1,11 @@
-const ethers = require('ethers');
-
+const ethers = require('ethers')
 const ObservableStore = require('obs-store')
 const EventEmitter = require('safe-event-emitter')
 const extend = require('xtend')
 const {
   pluginRestrictedMethodDescriptions,
 } = require('./permissions/restrictedMethods')
+const { errors: rpcErrors } = require('eth-json-rpc-errors')
 
 const isTest = process.env.IN_TEST === 'true' || process.env.METAMASK_ENV === 'test'
 const SES = (
@@ -40,7 +40,9 @@ class PluginsController extends EventEmitter {
     this.store = new ObservableStore(initState)
 
     // TODO:SECURITY disable errorStackMode for production
-    this.rootRealm = SES.makeSESRootRealm({consoleMode: 'allow', errorStackMode: 'allow', mathRandomMode: 'allow'})
+    this.rootRealm = SES.makeSESRootRealm({
+      consoleMode: 'allow', errorStackMode: 'allow', mathRandomMode: 'allow',
+    })
 
     this.setupProvider = opts.setupProvider
     this._txController = opts._txController
@@ -49,15 +51,18 @@ class PluginsController extends EventEmitter {
     this._getAccounts = opts._getAccounts
     this.getApi = opts.getApi
     this.getAppKeyForDomain = opts.getAppKeyForDomain
+    this.onUnlock = opts.onUnlock
 
     this.rpcMessageHandlers = new Map()
     this.accountMessageHandlers = new Map()
+    this.apiRequestHandlers = new Map()
     this.adding = {}
   }
 
   runExistingPlugins () {
     const plugins = this.store.getState().plugins
-    console.log('running existing plugins')
+    console.log('running existing plugins', plugins)
+
     Object.values(plugins).forEach(({ pluginName, approvedPermissions, sourceCode }) => {
       console.log(`running: ${pluginName}`)
       const ethereumProvider = this.setupProvider(pluginName, async () => { return {name: pluginName } }, true)
@@ -96,6 +101,7 @@ class PluginsController extends EventEmitter {
   clearPluginState () {
     this.rpcMessageHandlers.clear()
     this.accountMessageHandlers.clear()
+    this.apiRequestHandlers.clear()
     this.store.updateState({
       plugins: {},
       pluginStates: {},
@@ -235,6 +241,15 @@ class PluginsController extends EventEmitter {
     return this._startPlugin(pluginName, approvedPermissions, sourceCode, ethereumProvider)
   }
 
+  async apiRequest (plugin, origin) {
+    const handler = this.apiRequestHandlers.get(plugin)
+    if (!handler) {
+      throw rpcErrors.methodNotFound('apiRequest: ' + plugin)
+    }
+
+    return handler(origin)
+  }
+
   _eventEmitterToListenerMap (eventEmitter) {
     return eventEmitter.eventNames().map(eventName => {
       return {
@@ -282,12 +297,15 @@ class PluginsController extends EventEmitter {
       ...this.getApi(),
     }
     const registerRpcMessageHandler = this._registerRpcMessageHandler.bind(this, pluginName)
+    const registerApiRequestHandler = this._registerApiRequestHandler.bind(this, pluginName)
     const registerAccountMessageHandler = this._registerAccountMessageHandler.bind(this, pluginName)
     const apisToProvide = {
       onMetaMaskEvent,
       registerRpcMessageHandler,
+      registerApiRequestHandler,
       registerAccountMessageHandler,
       getAppKey: () => this.getAppKeyForDomain(pluginName),
+      onUnlock: this.onUnlock,
     }
     apiList.forEach(apiKey => {
       apisToProvide[apiKey] = possibleApis[apiKey]
@@ -301,6 +319,10 @@ class PluginsController extends EventEmitter {
 
   _registerAccountMessageHandler (pluginName, handler) {
     this.accountMessageHandlers.set(pluginName, handler)
+  }
+
+  _registerApiRequestHandler (pluginName, handler) {
+    this.apiRequestHandlers.set(pluginName, handler)
   }
 
   _startPlugin (pluginName, approvedPermissions, sourceCode, ethereumProvider) {
@@ -317,6 +339,7 @@ class PluginsController extends EventEmitter {
         window: {
           crypto,
           SubtleCrypto,
+          setTimeout,
           fetch,
           XMLHttpRequest,
           WebSocket,
@@ -328,6 +351,8 @@ class PluginsController extends EventEmitter {
         fetch,
         XMLHttpRequest,
         WebSocket,
+        Buffer,
+        Date,
       })
       sessedPlugin()
     } catch (err) {

@@ -60,7 +60,7 @@ class AccountsController extends EventEmitter {
     const accountrings = currentState.accountrings
     const isAccountRingsAccount = accountrings.find(accountring => accountring.accounts.includes(address))
     if (isAccountRingsAccount) {
-      let newAccountRings = []
+      const newAccountRings = []
       accountrings.forEach(accountring => {
         const newAccountRingsAccounts = accountring.accounts.filter(account => account !== address)
         if (newAccountRingsAccounts.length) {
@@ -156,10 +156,13 @@ class AccountsController extends EventEmitter {
       const signedTx = await this.keyringController.signTransaction(ethTx, fromAddress, opts)
       return signedTx
     } catch (err) {
+      this.throwIfNotMissingAccount(err)
+
       const address = normalizeAddress(fromAddress)
       if (!this.pluginManagesAddress(address)) {
         throw new Error('No keyring or plugin found for the requested account.')
       }
+
       const handler = this.getHandlerForAccount(address)
       const tx = ethTx.toJSON(true)
       tx.from = fromAddress
@@ -171,11 +174,21 @@ class AccountsController extends EventEmitter {
     }
   }
 
+  throwIfNotMissingAccount (error) {
+    // If no keyring, resume, but otherwise, throw the error.
+    if (error.message !== 'No keyring found for the requested account.') {
+      throw error
+    }
+  }
+
   async signMessage (msgParams) {
     try {
-      const signedMessage = this.keyringController.signMessage(msgParams)
+      const signedMessage = await this.keyringController.signMessage(msgParams)
       return signedMessage
     } catch (err) {
+
+      this.throwIfNotMissingAccount(err)
+
       const address = normalizeAddress(msgParams.from)
       if (!this.pluginManagesAddress(address)) {
         throw new Error('No keyring or plugin found for the requested account.')
@@ -190,9 +203,11 @@ class AccountsController extends EventEmitter {
 
   async signPersonalMessage (msgParams) {
     try {
-      const signedPersonalMessage = this.keyringController.signPersonalMessage(msgParams)
+      const signedPersonalMessage = await this.keyringController.signPersonalMessage(msgParams)
       return signedPersonalMessage
     } catch (err) {
+      this.throwIfNotMissingAccount(err)
+
       const address = normalizeAddress(msgParams.from)
       if (!this.pluginManagesAddress(address)) {
         throw new Error('No keyring or plugin found for the requested account.')
@@ -215,6 +230,8 @@ class AccountsController extends EventEmitter {
     try {
       return this.keyringController.exportAppKeyForAddress(account, origin)
     } catch (err) {
+      this.throwIfNotMissingAccount(err)
+
       const address = normalizeAddress(account)
       if (!this.pluginManagesAddress(address)) {
         throw new Error('No keyring or plugin found for the requested account.')

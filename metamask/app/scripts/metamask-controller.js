@@ -7,6 +7,7 @@
 const EventEmitter = require('events')
 const pump = require('pump')
 const Dnode = require('dnode')
+const Capnode = require('capnode').default
 const ObservableStore = require('obs-store')
 const ComposableObservableStore = require('./lib/ComposableObservableStore')
 const asStream = require('obs-store/lib/asStream')
@@ -41,6 +42,7 @@ const { PermissionsController } = require('./controllers/permissions')
 const PluginsController = require('./controllers/plugins')
 const PromptsController = require('./controllers/prompts')
 const ResourceController = require('./controllers/resource')
+const CombinedResourceController = require('./controllers/combined-resources')
 const AccountsController = require('./controllers/accounts')
 const AddressAuditController = require('./controllers/address-audit')
 const nodeify = require('./lib/nodeify')
@@ -283,6 +285,11 @@ module.exports = class MetamaskController extends EventEmitter {
       requiredFields: ['symbol', 'balance', 'identifier', 'decimals', 'customViewUrl'],
     })
 
+    this.combinedResourceController = new CombinedResourceController({
+      assetsController: this.assetsController,
+      pluginAccountsController: this.pluginAccountsController,
+    })
+
     this.promptsController = new PromptsController()
 
     this.pluginsController = new PluginsController({
@@ -291,6 +298,7 @@ module.exports = class MetamaskController extends EventEmitter {
       _networkController: this.networkController,
       _blockTracker: this.blockTracker,
       _getAccounts: this.getAccounts.bind(this),
+      onUnlock: this._onUnlock.bind(this),
       getApi: this.getPluginsApi.bind(this),
       initState: initState.PluginsController,
       getAppKeyForDomain: this.getAppKeyForDomain.bind(this),
@@ -367,8 +375,9 @@ module.exports = class MetamaskController extends EventEmitter {
       // Disabling to avoid piping plugin source codes to UI with every update:
       // TODO: Optimize in a different way:
       // PluginsController: this.pluginsController.store,
-      AssetsController: this.assetsController.store,
-      PluginAccountsController: this.pluginAccountsController.store,
+      // AssetsController: this.assetsController.store,
+      // PluginAccountsController: this.pluginAccountsController.store,
+      CombinedResourceController: this.combinedResourceController.store,
       AddressAuditController: this.addressAuditController.store,
       ThreeBoxController: this.threeBoxController.store,
       PromptsController: this.promptsController.store,
@@ -1529,6 +1538,7 @@ module.exports = class MetamaskController extends EventEmitter {
 
     // messages between inpage and background
     this.setupProviderConnection(mux.createStream('provider'), originDomain)
+    this.setupCapnodeConnection(mux.createStream('cap'), originDomain)
     this.setupPublicConfig(mux.createStream('publicConfig'))
   }
 
@@ -1548,6 +1558,7 @@ module.exports = class MetamaskController extends EventEmitter {
     // connect features
     this.setupControllerConnection(mux.createStream('controller'))
     this.setupProviderConnection(mux.createStream('provider'), originDomain)
+    this.setupCapnodeConnection(mux.createStream('cap'), originDomain)
   }
 
   /**
@@ -1624,6 +1635,30 @@ module.exports = class MetamaskController extends EventEmitter {
     )
   }
 
+  setupCapnodeConnection (outStream, origin) {
+    const apiObj = {
+      ping: () => 'pong',
+      subscribe: ({ listener }) => {
+        setTimeout(() => listener('Hello!'), 1000)
+      },
+      getPluginApi: (pluginName) => {
+        return this.pluginsController.apiRequest(pluginName, origin)
+      },
+    }
+    const cap = new Capnode({ index: apiObj })
+    const server = cap.createRemote()
+
+    pump(
+      outStream,
+      server,
+      outStream,
+      (err) => {
+        // TODO: Any capServer deallocation steps.
+        if (err) log.error(err)
+      }
+    )
+  }
+
   setupProvider (origin, getSiteMetadata, isPlugin) {
     const engine = this.setupProviderEngine(origin, getSiteMetadata, isPlugin)
     const provider = providerFromEngine(engine)
@@ -1670,6 +1705,7 @@ module.exports = class MetamaskController extends EventEmitter {
 
     // forward to metamask primary provider
     engine.push(providerAsMiddleware(provider))
+
     return engine
   }
 
@@ -1750,6 +1786,15 @@ module.exports = class MetamaskController extends EventEmitter {
     }
 
     this.accountsController.fullUpdate()
+  }
+
+  _onUnlock (cb) {
+    this.keyringController.memStore.subscribe(state => {
+      const { isUnlocked } = state
+      if (isUnlocked) {
+        return cb()
+      }
+    })
   }
 
   /**
