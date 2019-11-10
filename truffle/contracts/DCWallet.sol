@@ -1,33 +1,26 @@
 pragma solidity >=0.5.0 <0.6.0;
 
-contract DCWallet {
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/ownership/Ownable.sol";
+
+contract DCWallet is Ownable {
     string public word;
     uint public timedelta; // in seconds
     uint public lastCall; // in seconds
+    address[] public recoverableAssets;
+    address payable public recoveryAddress;
 
-    event WordChanged(address indexed author, string oldValue, string newValue);
     event Execution(address destination, uint value, bytes data);
     event ExecutionFailure(address destination, uint value, bytes data);
+    event NewRecoveryAddress(address recoveryAddress, uint timedelta);
 
-    constructor(string memory value) public {
-        word = value;
-        emit WordChanged(msg.sender, word, value);
+    constructor(address[] memory assets) public {
+        setRecoverableAssets(assets);
     }
 
-    function getValue() public view returns (string memory) {
-        return word;
-    }
-
-    function setValue(string memory value) public {
-        word = value;
-    }
-
-    function sendEth(address payable to, uint value) public payable {
-        to.transfer(value);
-    }
-
-    function isRecoverable() public view returns (bool) {
-        return now >= lastCall + timedelta;
+    modifier updateLastCall() {
+        lastCall = now;
+        _;
     }
 
     function timeTillDeadline() public view returns (uint) {
@@ -37,12 +30,58 @@ contract DCWallet {
         return 0;
     }
 
-    function iAmAlive() public {
-        lastCall = now;
+    function isRecoverable() public view returns (bool) {
+        return now >= lastCall + timedelta;
     }
 
+    function setRecoverableAssets(address[] memory assets) public onlyOwner {
+        for (uint8 i = 0; i < assets.length; i++) {
+            recoverableAssets.push(assets[i]);
+        }
+    }
+
+    function sendEth(address payable to, uint value) public payable updateLastCall onlyOwner {
+        to.transfer(value);
+    }
+
+    /// @dev extend the deadline for recovery
+    function iAmAlive() public updateLastCall onlyOwner returns (bool) {
+        return true;
+    }
+
+    function setRecoveryAddress(
+        address payable _recoveryAddress,
+        uint256 _timedelta
+    ) public updateLastCall onlyOwner {
+        require(recoveryAddress != address(0),
+            "#DCWallet setRecoveryAddress(): recoveryAddress cannot be zero address");
+        require(timedelta > 0,
+            "#DCWallet setRecoveryAddress(): timedelta must be bigger than zero");
+
+        recoveryAddress = _recoveryAddress;
+        timedelta = _timedelta;
+
+        emit NewRecoveryAddress(_recoveryAddress, _timedelta);
+    }
+
+    function recoverFunds() public {
+        require(isRecoverable(), "#DCWallet recoverFunds(): Wallet is not recoverable");
+
+        for (uint8 i = 0; i < recoverableAssets.length; i++) {
+            IERC20 erc20 = IERC20(recoverableAssets[i]);
+            IERC20(recoverableAssets[i])
+                .transfer(recoveryAddress, erc20.balanceOf(address(this)));
+        }
+
+        // send ETH
+        recoveryAddress.transfer(address(this).balance);
+    }
+
+    // Thank you Gnosis :)
     function executeTransaction(address destination, uint value, bytes memory data)
         public
+        updateLastCall
+        onlyOwner
         returns (bool)
     {
         uint dataLength = data.length;
