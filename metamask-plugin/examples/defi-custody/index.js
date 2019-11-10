@@ -128,10 +128,12 @@ async function addAccount (params) {
   console.log('TCAD')
   await prefundERC20(TCAD, account)
   // TODO: ask mentor for "The method does not exist / is not available.", data: "wallet_manageAssets:addAsset"
+  
+  updateUi();
+  await wallet.setSelectedAddress(account.toLowerCase());
   let network = await provider.getNetwork()
   await updateAssets(USDC.networks[network.chainId].address);
   await updateAssets(TCAD.networks[network.chainId].address);
-  updateUi();
 }
 
 async function prefundEth(appAddress) {

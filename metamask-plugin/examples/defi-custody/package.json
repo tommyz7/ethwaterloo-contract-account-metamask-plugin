@@ -20,6 +20,7 @@
     "initialPermissions": {
       "confirm": {},
       "setAccountLabel": {},
+      "setSelectedAddress": {},
       "wallet_manageAssets": {},
       "wallet_manageIdentities": {}
     }

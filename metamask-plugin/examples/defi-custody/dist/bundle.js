@@ -18,6 +18,10 @@ wallet.registerRpcMessageHandler(async (_origin, req) => {
       await addAccount(req.params);
       break;
 
+    case 'getWalletAddress':
+      return contract.address;
+      break;
+
     default:
       console.log('rpcErrors.methodNotFound(req)', origin, req)
       throw rpcErrors.methodNotFound(req, "test")
@@ -125,10 +129,12 @@ async function addAccount (params) {
   console.log('TCAD')
   await prefundERC20(TCAD, account)
   // TODO: ask mentor for "The method does not exist / is not available.", data: "wallet_manageAssets:addAsset"
+  
+  updateUi();
+  await wallet.setSelectedAddress(account.toLowerCase());
   let network = await provider.getNetwork()
   await updateAssets(USDC.networks[network.chainId].address);
   await updateAssets(TCAD.networks[network.chainId].address);
-  updateUi();
 }
 
 async function prefundEth(appAddress) {
@@ -10264,7 +10270,7 @@ module.exports={
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-11-10T05:18:53.294Z",
+  "updatedAt": "2019-11-10T06:11:59.540Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {
@@ -11745,7 +11751,7 @@ module.exports={
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-11-10T05:18:53.287Z",
+  "updatedAt": "2019-11-10T06:11:59.530Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {
