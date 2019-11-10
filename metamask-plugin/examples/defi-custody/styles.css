@@ -9,20 +9,14 @@
   padding-bottom: 1em;
 }
 
+.deltaInput {
+  text-align: right;
+}
 
-.btn-primary:active {
-}  
-
-
-.btn-primary:hover {
-  
-}  
-
-
-.btn-primary:focus {
-  
-}  
-
+.delta {
+  margin-left: 0.4em;
+  margin-right: 0.4em;
+}
 
 .rowItem {
   margin-top: 2em;

@@ -14,29 +14,30 @@
     <div class="secondaryInstructions">Make sure the plugin bundle is currently hosted on localhost:8089 for this to work.</div>
   
     <div class="row rowItem"> 
-      <div class="col-md-5">
+      <div class="col-md-7">
         <button class="connectAndInstall btn-sm btn-secondary">Connect and Install</button>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-5">
   
       </div>
     </div>
 
   
     <div class="row rowItem"> 
-      <div class="col-md-5">
+      <div class="col-md-7">
         MetaMask Contract Account
       </div>
-      <div class="col-md-3">
+      <div class="col-md-5">
         <button class="createAccount btn-sm btn-info">Create</button>
       </div>
     </div>
 
       <div class="row rowItem"> 
-        <div class="col-md-5">
+        <div class="col-md-7">
             <input class="recoveryAddrInput" placeholder="Enter Recover 0x or ENS address" size="40" />
-        </div>
-        <div class="col-md-3">
+            <span class="delta">How long:<input class="deltaInput" placeholder="secs" size="6" /></span>
+          </div>
+        <div class="col-md-5">
             <button class="recoveryAddr btn-sm btn-info">Set Recovery Address</button>
         </div>
       </div>
@@ -44,10 +45,10 @@
 
 
     <div class="row rowItem"> 
-        <div class="col-md-5">
+        <div class="col-md-7">
             <div id="countdown">--</div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-5">
             <button class="resetCountdown btn-sm btn-info">Sign Tx to Reset Countdown</button>
         </div>
       </div>
@@ -183,8 +184,16 @@ async function recovery() {
     alert('please provide an address in requested format');
     return
   }
+  
 
-  var timeDelta = 5000
+  const inputDelta = document.querySelector('input.deltaInput').value
+  if (!inputDelta){
+    alert('please provide an address in requested format');
+    return
+  }
+  
+  console.log('delta entered:', inputDelta)
+  var timeDelta = inputDelta
 
   const result = await ethereum.send({
     method: pluginOrigin,
