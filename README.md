@@ -1,6 +1,6 @@
 # The first smart account in Metamask history!
 
-Using Metamask Snaps. More details and video demo https://devpost.com/software/dc-wallet
+Winner of ETHWaterloo2. Using Metamask Snaps. Demo video https://www.youtube.com/watch?v=iwaseuYXYx0
 
 ## Running locally
 ### Run Ganache
