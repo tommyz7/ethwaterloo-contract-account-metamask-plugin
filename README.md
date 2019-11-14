@@ -1,4 +1,6 @@
-# ethwaterloo-contract-account-metamask-plugin
+# The first smart account in Metamask history!
+
+Using Metamask Snaps. More details https://devpost.com/software/dc-wallet
 
 ## Running locally
 ### Run Ganache
