@@ -1,6 +1,6 @@
 # The first smart account in Metamask history!
 
-Using Metamask Snaps. More details https://devpost.com/software/dc-wallet
+Using Metamask Snaps. More details and video demo https://devpost.com/software/dc-wallet
 
 ## Running locally
 ### Run Ganache
